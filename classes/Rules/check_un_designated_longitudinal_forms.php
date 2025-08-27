@@ -9,13 +9,18 @@ class check_un_designated_longitudinal_forms implements ValidationsImplementatio
     private $notifications = [];
 
     public $break=false;
-
+    public $extra = '';
     public $modalTableHeader = array("Unique Instrument Name", "Instrument Label", "Designate Instruments for My Events");
     public $notDesignatedForms = [];
     public function __constructor($project, $notifications)
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
+        $this->setExtra();
+    }
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('check_un_designated_longitudinal_forms_comment');
     }
 
 
@@ -89,6 +94,7 @@ class check_un_designated_longitudinal_forms implements ValidationsImplementatio
             'type'  => $this->getNotifications()['WARNING'],
             'modal' => $this->notDesignatedForms,
             'modalHeader' => $this->modalTableHeader,
+            'extra' => $this->extra,
             'links' => array(),
         );
     }

@@ -352,23 +352,30 @@ class Validations
     }
     public static function getCheckDetailsTextBox(string $boxid): string
     {
-// Guard + safe embedding in HTML/JS
         $boxid = trim($boxid);
+
         $html = '';
-        $html .= '<label for="' . $boxid . '" style="display:block; margin-bottom:6px; font: 14px/1.2 Arial, Helvetica, sans-serif; color:#111827;">Comments</label>';
-        $html .= '<input type="text" id="' . $boxid . '" class="usercomment" name="' . $boxid . '" placeholder="Comments..." style="width:100%; max-width:320px; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; font: 14px/1.2 Arial, Helvetica, sans-serif;" />';
-
-
-// ✅ Pass the input value directly to JS using getElementById(...).value
-        $html .= '<button type="button"'
-            . ' id="' . $boxid . '_save"'
-            . ' title="Save comment"'
-            . ' aria-label="Save comment"'
-            . ' onclick="SaveUserCommentjs(\'' . $boxid . '\')"'
-            . ' style="margin:0 6px; padding:6px 14px; border:1px solid #B6C8E5; border-radius:8px; background:#FFFFFF; color:#103B66; font-weight:600; font-size:13px; cursor:pointer;"'
-            . ' onmouseover="this.style.backgroundColor=\'#F3F8FF\'"'
-            . ' onmouseout="this.style.backgroundColor=\'#FFFFFF\'"'
-            . '>Save</button>';
+        $html .= '<div class="cc-comment" style="max-width:560px;">';
+        $html .= ' <table role="presentation" style="border-collapse:collapse; width:100%;">';
+        $html .= ' <tr>';
+        $html .= ' <td colspan="2" style="padding:0 0 6px;">';
+        $html .= ' <label for="' . $boxid . '" style="font-weight:600; color:#111827;">Add Comments</label>';
+        $html .= ' </td>';
+        $html .= ' </tr>';
+        $html .= ' <tr>';
+// Small button on the LEFT
+        $html .= ' <td style="vertical-align:top; white-space:nowrap; padding:0 8px 0 0;">';
+        $html .= ' <button type="button" id="' . $boxid . '_save" title="Save comment" aria-label="Save comment" onclick="SaveUserCommentjs(\'' . $boxid . '\')"'
+            . ' style="padding:4px 8px; font-size:12px; line-height:1.2; border:1px solid #CBD5E1; border-radius:6px; background:#FFF; cursor:pointer;">Save</button>';
+        $html .= ' </td>';
+// Expandable/shrinkable textbox on the RIGHT
+        $html .= ' <td style="width:100%;">';
+        $html .= ' <textarea id="' . $boxid . '" class="usercomment" name="' . $boxid . '" placeholder="Comments..." rows="3"'
+            . ' style="width:100%; min-height:2.75rem; resize:vertical; box-sizing:border-box; border:1px solid #CBD5E1; border-radius:6px; padding:8px 10px; font:14px/1.3 Arial, Helvetica, sans-serif;"></textarea>';
+        $html .= ' </td>';
+        $html .= ' </tr>';
+        $html .= ' </table>';
+        $html .= '</div>';
 
 
         return $html;

@@ -11,7 +11,7 @@ class check_presence_of_calculated_fields implements ValidationsImplementation
     public $break = false;
 
     public $dataDictionary = [];
-
+    public $extra = '';
     public $inconsistentFields = [];
 
     public $modalHeader = array("Instrument", "Variable / Field Name", "Field Label", "Options/Choices", "Edit");
@@ -20,9 +20,13 @@ class check_presence_of_calculated_fields implements ValidationsImplementation
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
-        $this->dataDictionary = \REDCap::getDataDictionary('array');;
+        $this->dataDictionary = \REDCap::getDataDictionary('array');
+        $this->setExtra();
     }
-
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('check_presence_of_calculated_fields_comment');
+    }
     public function getProject(): \Project
     {
         return $this->project;
@@ -63,6 +67,7 @@ class check_presence_of_calculated_fields implements ValidationsImplementation
             'body'  => $this->getNotifications()['CALCULATED_FIELDS_BODY'],
             'type'  => $this->getNotifications()['DANGER'],
             'links' => array(),
+            'extra' => $this->extra,
             'modal' => $this->inconsistentFields,
             'modalHeader' => $this->modalHeader
         );

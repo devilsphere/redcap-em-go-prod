@@ -10,6 +10,8 @@ class my_awesome_new_rule implements ValidationsImplementation
 
     public $break = false;
 
+    public $extra = '';
+
     public $modalHeader = array("TABLE HEADER 1", "TABLE HEADER 2", "TABLE HEADER 3");
 
     public $inconsistentFields = [];
@@ -18,8 +20,13 @@ class my_awesome_new_rule implements ValidationsImplementation
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
+        $this->setExtra();
     }
 
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('are_dates_consistent_user_comment');
+    }
     public function getProject(): \Project
     {
         return $this->project;
@@ -50,7 +57,7 @@ class my_awesome_new_rule implements ValidationsImplementation
             'type' => $this->getNotifications()['WARNING'],
             'modal' => $this->inconsistentFields,
             'modalHeader' => $this->modalHeader,
-            'extra' => 'CUSTOM TEXT/HTML',
+            'extra' => $this->extra,
             'links' => array(
                 array(
                     'url' => '[LINK_TO_EXTERNAL_PAGE]',

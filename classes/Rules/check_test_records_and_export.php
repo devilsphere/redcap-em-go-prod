@@ -11,12 +11,17 @@ class check_test_records_and_export implements ValidationsImplementation
     public $break = false;
 
     private $exportCount = 0;
-
+    public $extra = '';
     private $recordsCount = 0;
     public function __constructor($project, $notifications)
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
+        $this->setExtra();
+    }
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('check_presence_of_branching_logic_comment');
     }
 
     public function getProject(): \Project
@@ -55,7 +60,7 @@ class check_test_records_and_export implements ValidationsImplementation
                 SELECT description FROM redcap_log_event8 where project_id=$pid
                 UNION  All
                 SELECT description FROM redcap_log_event9 where project_id=$pid";
-                
+
 
         $result = db_query( $sql );
         while ( $result1 = db_fetch_assoc( $result ) )
@@ -80,7 +85,7 @@ class check_test_records_and_export implements ValidationsImplementation
             'title' => $this->getNotifications()['TEST_RECORDS_TITLE'],
             'body' => $this->getNotifications()['TEST_RECORDS_BODY'],
             'type' => $this->getNotifications()['WARNING'],
-            'extra' => '<u>Exports:</u>'.$this->exportCount.'<br><u> Records: </u>'.$this->recordsCount,
+            'extra' => $this->extra . '<u>Exports:</u>'.$this->exportCount.'<br><u> Records: </u>'.$this->recordsCount,
             'links' => array(),
         );
     }

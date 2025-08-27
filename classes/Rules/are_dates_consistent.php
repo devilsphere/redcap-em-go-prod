@@ -21,7 +21,8 @@ class are_dates_consistent implements ValidationsImplementation
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
-        $this->dataDictionary = \REDCap::getDataDictionary('array');;
+        $this->dataDictionary = \REDCap::getDataDictionary('array');
+        $this->setExtra();
     }
 
 
@@ -103,7 +104,7 @@ class are_dates_consistent implements ValidationsImplementation
             }
         }
 
-        self::setExtra();
+        //self::setExtra();
         self::setdateConsistentHtml($pid);
         return $FilteredOut;
         //return  array_map("unserialize", array_unique(array_map("serialize", $FilteredOut))); //return just the unique values found
@@ -136,6 +137,7 @@ class are_dates_consistent implements ValidationsImplementation
         $html .= '</table>';
         return $html;
     }
+
     public function getDateQuestions()
     {
         $var = array();
@@ -165,7 +167,10 @@ class are_dates_consistent implements ValidationsImplementation
             'modal' => $this->inconsistentDates,
             'modalHeader' => $this->modalTableHeader,
             'extra' => $this->extra,
-            'links' => array(),
+            'links' => array(                array(
+                'url' => 'https://www.google.com',
+                'title' => 'Read More'
+            )),
         );
     }
 

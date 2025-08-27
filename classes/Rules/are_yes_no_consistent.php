@@ -18,6 +18,7 @@ class are_yes_no_consistent implements ValidationsImplementation
 
     public $noWords = "No, no, No*, 是";
     public $modalHeader = array("Instrument", "Variable / Field Name", "Field Label", "Options/Choices", "Edit");
+    public $extra = '';
 
     public function __constructor($project, $notifications)
     {
@@ -25,7 +26,10 @@ class are_yes_no_consistent implements ValidationsImplementation
         $this->setNotifications($notifications);
         $this->dataDictionary = \REDCap::getDataDictionary('array');;
     }
-
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('are_yes_no_consistent_comment');
+    }
     public function getProject(): \Project
     {
         return $this->project;
@@ -38,7 +42,7 @@ class are_yes_no_consistent implements ValidationsImplementation
 
     public function validate(): bool
     {
-
+        self::setExtra();
         $positive_negative_array= Validations::getLists();
         $all_list_questions=  Validations::Transform($positive_negative_array);
 
@@ -62,6 +66,7 @@ class are_yes_no_consistent implements ValidationsImplementation
             'type' => $this->getNotifications()['WARNING'],
             'links' => array(),
             'modal' => $this->inconsistentFields,
+            'extra' => $this->extra,
             'modalHeader' => $this->modalHeader
         );
     }

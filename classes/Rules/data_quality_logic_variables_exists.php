@@ -10,7 +10,7 @@ class data_quality_logic_variables_exists implements ValidationsImplementation
     private $notifications = [];
 
     public $break = false;
-
+    public $extra = '';
     public $inconsistentFields = [];
 
     public $modalHeader = array("Instrument", "Variable / Field Name", "Field Label", "Options/Choices", "Edit");
@@ -19,7 +19,11 @@ class data_quality_logic_variables_exists implements ValidationsImplementation
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
-
+        $this->setExtra();
+    }
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('check_presence_of_branching_logic_comment');
     }
 
     public function getProject(): \Project
@@ -60,6 +64,7 @@ class data_quality_logic_variables_exists implements ValidationsImplementation
             'body' => $this->getNotifications()['DATA_QUALITY_LOGIC_BODY'],
             'type' => $this->getNotifications()['WARNING'],
             'links' => array(),
+            'extra' => $this->extra,
             'modal' => $this->inconsistentFields,
             'modalHeader' => $this->modalHeader
         );

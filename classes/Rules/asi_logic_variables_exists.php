@@ -10,15 +10,19 @@ class asi_logic_variables_exists implements ValidationsImplementation
     private $notifications = [];
 
     public $break = false;
-
+    public $extra = '';
     public $inconsistentReports = [];
     public $modalHeader = array("Report Title", "Real Time Executed?", "Missing Variable", "Edit");
     public function __constructor($project, $notifications)
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
+        $this->setExtra();
     }
-
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('are_positive_negative_consistent_comment');
+    }
     public function getProject(): \Project
     {
         return $this->project;
@@ -31,6 +35,7 @@ class asi_logic_variables_exists implements ValidationsImplementation
 
     public function validate(): bool
     {
+
         $var = array();
         $logic_fields = self::ExtractASILogic();
         $logic_fields_array = Validations::ExtractVariables($logic_fields);
@@ -61,6 +66,7 @@ class asi_logic_variables_exists implements ValidationsImplementation
             'body'  => $this->getNotifications()['ASI_LOGIC_BODY'],
             'type'  => $this->getNotifications()['DANGER'],
             'links' => array(),
+            'extra' => $this->extra,
             'modal' => $this->inconsistentReports,
             'modalHeader' => $this->modalHeader
         );
@@ -86,10 +92,10 @@ class asi_logic_variables_exists implements ValidationsImplementation
     {
 
         $var = array();
-        $sql = "SELECT 
-	              SRV.form_name as form, RSS.event_id as event_id,  RSS.condition_logic as logic 
-                FROM 
-	              redcap_surveys as SRV, redcap_surveys_scheduler as RSS 
+        $sql = "SELECT
+	              SRV.form_name as form, RSS.event_id as event_id,  RSS.condition_logic as logic
+                FROM
+	              redcap_surveys as SRV, redcap_surveys_scheduler as RSS
                 WHERE
 	               RSS.condition_logic IS NOT NULL and RSS.active=1 and SRV.survey_id=RSS.survey_id and SRV.project_id=" . $this->getProject()->project_id;
         $result = db_query($sql);

@@ -12,7 +12,7 @@ class are_positive_negative_consistent implements ValidationsImplementation
     public $break = false;
 
     public $modalHeader = array("Instrument", "Variable / Field Name", "Field Label", "Options/Choices", "Edit");
-
+    public $extra = '';
     public $dataDictionary = [];
     public $inconsistentFields = [];
 
@@ -23,10 +23,14 @@ class are_positive_negative_consistent implements ValidationsImplementation
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
+        $this->setExtra();
         $this->dataDictionary = \REDCap::getDataDictionary('array');;
     }
 
-
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('are_positive_negative_consistent_comment');
+    }
     public function getProject(): \Project
     {
         return $this->project;
@@ -39,7 +43,7 @@ class are_positive_negative_consistent implements ValidationsImplementation
 
     public function validate(): bool
     {
-
+        //self::setExtra();
         $positive_negative_array= Validations::getLists();
         $all_list_questions=  Validations::Transform($positive_negative_array);
 
@@ -62,6 +66,7 @@ class are_positive_negative_consistent implements ValidationsImplementation
             'body'  => $this->getNotifications()['POSITIVE_NEGATIVE_BODY'],
             'type'  => $this->getNotifications()['WARNING'],
             'links' => array(),
+            'extra' => $this->extra,
             'modal' => $this->inconsistentFields,
             'modalHeader' => $this->modalHeader
         );

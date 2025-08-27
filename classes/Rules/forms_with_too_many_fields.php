@@ -13,7 +13,7 @@ class forms_with_too_many_fields implements ValidationsImplementation
     public $break = false;
 
     public $numberOfFields = [];
-
+    public $extra = '';
     private $maxRecommended = 100;
 
     public $modalHeader = array("Instrument Name", "Number of Fields");
@@ -25,6 +25,11 @@ class forms_with_too_many_fields implements ValidationsImplementation
         $this->setProject($project);
         $this->setNotifications($notifications);
         $this->maxRecommended = ExternalModules::getSystemSetting($this->prefix, 'forms_with_too_many_fields_max_recommended');
+        $this->setExtra();
+    }
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('check_presence_of_branching_logic_comment');
     }
 
     public function getProject(): \Project
@@ -66,6 +71,7 @@ class forms_with_too_many_fields implements ValidationsImplementation
             'body' => $this->getNotifications()['MAX_NUMBER_OF_RECORDS_BODY'],
             'type' => $this->getNotifications()['WARNING'],
             'links' => array(),
+            'extra' => $this->extra,
             'modal' => $this->numberOfFields,
             'modalHeader' => $this->modalHeader
         );

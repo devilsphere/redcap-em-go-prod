@@ -8,13 +8,18 @@ class identifier_exists implements ValidationsImplementation
     private $project;
 
     private $notifications = [];
-
+    public $extra = '';
     public $break = false;
 
     public function __constructor($project, $notifications)
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
+        $this->setExtra();
+    }
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('check_presence_of_branching_logic_comment');
     }
 
     public function getProject(): \Project
@@ -43,6 +48,7 @@ class identifier_exists implements ValidationsImplementation
             'title' => $this->getNotifications()['IDENTIFIERS_TITLE'],
             'body' => $this->getNotifications()['IDENTIFIERS_BODY'],
             'type' => $this->getNotifications()['WARNING'],
+            'extra' => $this->extra,
             'links' => array(
                 array(
                     'url' => APP_PATH_WEBROOT . 'ProjectSetup/index.php?pid=' . $this->getProject()->project_id . '&route=IdentifierCheckController:index',

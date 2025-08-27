@@ -21,11 +21,11 @@ Yes, This Module allows developer to add new custom rules.
     4. `getErrorMessage`
     5. `getNotifications`
     6. `setNotifications`
-7. Please Note you do not have to call `setProject` and `setNotifications` as they are called by default when rule is
+4. Please Note you do not have to call `setProject` and `setNotifications` as they are called by default when rule is
    enabled.
-8. `validate` method will contain the validation logic. The method will return `true` if validation passed. `false` if
+5. `validate` method will contain the validation logic. The method will return `true` if validation passed. `false` if
    validation failed.
-9. If validation failed method `getErrorMessage` will be called. which will return an array with following parameter.
+6. If validation failed method `getErrorMessage` will be called. which will return an array with following parameter.
     1. `title` will be pulled from notification.ini file.
     2. `body` will be pulled from notification.ini file.
     3. `type` can be one of following: DANGER, WARNING, INFO.
@@ -33,7 +33,7 @@ Yes, This Module allows developer to add new custom rules.
     5. `modalHeader` modal table header.
     6. `extra` custom text or html to be displayed.
     7. `links` array of links.
-10. When your class is ready you need to tell the EM about it in `config.json`.
+7. When your class is ready you need to tell the EM about it in `config.json`.
     1. Add a new checkbox to enable/disable the rule under system settings section.
         1. `{
            "key": "[YOUR_RULE_CLASSNAME]", <-- THIS MUST MATCH YOUR RULE CLASSNAME.

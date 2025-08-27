@@ -20,7 +20,8 @@ class check_presence_of_branching_logic implements ValidationsImplementation
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
-        $this->dataDictionary = \REDCap::getDataDictionary('array');;
+        $this->dataDictionary = \REDCap::getDataDictionary('array');
+        $this->setExtra();
     }
     public function setExtra(): void
     {
@@ -38,7 +39,7 @@ class check_presence_of_branching_logic implements ValidationsImplementation
 
     public function validate(): bool
     {
-        self::setExtra();
+
         $var = array();
         // to ingnore smart variables
         $array_smart_variables = array("user-name",

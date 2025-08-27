@@ -11,7 +11,7 @@ class check_other_or_unknown implements ValidationsImplementation
     private $notifications = [];
 
     public $break = false;
-
+    public $extra = '';
     public $otherWords = "Other, Unknown, Don't know/Not sure ,Don't know,Not sure, Not Reported, NA, N/A, uninterpretable, otro, otra, no se, Other please specify, not obtained, missing data, do not know or not sure, refused, no response was entered on form despite affirming that the patient was untestable, no response was entered on form despite affirming that the patient was testable, did not provide answer / not answered, other type, unclear, not gradable, other frequency, sent or stored other, no data available, unable to examine ";
 
     public $ids = "97,88,98,99,999,9999,888,8888,-1,777,7777";
@@ -28,9 +28,13 @@ class check_other_or_unknown implements ValidationsImplementation
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
+        $this->setExtra();
         $this->similarity = ExternalModules::getSystemSetting($this->prefix, 'check_other_or_unknown_similarity');
     }
-
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('check_other_or_unknown_comment');
+    }
     public function getProject(): \Project
     {
         return $this->project;
@@ -61,6 +65,7 @@ class check_other_or_unknown implements ValidationsImplementation
             'body' => $this->getNotifications()['OTHER_OR_UNKNOWN_BODY'],
             'type' => $this->getNotifications()['WARNING'],
             'links' => array(),
+            'extra' => $this->extra,
             'modal' => $this->inconsistentFields,
             'modalHeader' => $this->modalHeader
         );

@@ -8,15 +8,19 @@ class check_my_first_instrument_presence implements ValidationsImplementation
     private $project;
 
     private $notifications = [];
-
+    public $extra = '';
     public $break = false;
 
     public function __constructor($project, $notifications)
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
+        $this->setExtra();
     }
-
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('check_my_first_instrument_presence_comment');
+    }
     public function getProject(): \Project
     {
         return $this->project;
@@ -45,6 +49,7 @@ class check_my_first_instrument_presence implements ValidationsImplementation
             'title' => $this->getNotifications()['MY_FIRST_INSTRUMENT_TITLE'],
             'body' => $this->getNotifications()['MY_FIRST_INSTRUMENT_BODY'],
             'type' => $this->getNotifications()['WARNING'],
+            'extra' => $this->extra,
             'links' => array(
                 array(
                     'url' => APP_PATH_WEBROOT . 'ProjectSetup/index.php?pid=' . $this->getProject()->project_id,
