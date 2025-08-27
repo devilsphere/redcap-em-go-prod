@@ -28,7 +28,9 @@
     "identifier_exists",
     "minimum_of_validated_fields",
     "reports_logic_variables_exists",
-    "today_exists_in_calculations"
+    "today_exists_in_calculations",
+      "datechange",
+      "saveusercomment"
   ],
   "authors": [
     {

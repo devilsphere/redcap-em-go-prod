@@ -57,8 +57,8 @@ class check_other_or_unknown implements ValidationsImplementation
     public function getErrorMessage()
     {
         return array(
-            'title' => $this->getNotifications()['YES_NO_TITLE'],
-            'body' => $this->getNotifications()['YES_NO_BODY'],
+            'title' => $this->getNotifications()['OTHER_OR_UNKNOWN_TITLE'],
+            'body' => $this->getNotifications()['OTHER_OR_UNKNOWN_BODY'],
             'type' => $this->getNotifications()['WARNING'],
             'links' => array(),
             'modal' => $this->inconsistentFields,

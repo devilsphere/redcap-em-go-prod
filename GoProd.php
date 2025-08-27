@@ -117,6 +117,14 @@ class GoProd extends \ExternalModules\AbstractExternalModule
     public function redcap_module_ajax($action, $payload, $project_id, $record, $instrument, $event_id, $repeat_instance,
                                        $survey_hash, $response_id, $survey_queue_hash, $page, $page_full, $user_id, $group_id)
     {
+        if($action == 'datechange') {
+            $response = $this->handleDateChange($payload);
+            return json_encode(['message' => $response]);
+        }
+        if($action == 'saveusercomment') {
+            $response = $this->saveUserComment($payload);
+            return json_encode(['message' => $response]);
+        }
         if ((isset($_GET['pid']) && $_GET['pid'] != "")) {
             global $Proj;
             $this->setProject($Proj);
@@ -156,7 +164,20 @@ class GoProd extends \ExternalModules\AbstractExternalModule
             throw new \Exception("Action  $action is not defined");
         }
     }
+public function saveUserComment($payload)
+    {
+        $pskey = $payload['pskey'] ?? null;
+        $psvalue = $payload['psvalue'] ?? null;
+        $pspid = $this->getProjectId();
+        if (!$pskey) {
+            return "Project setting missing for '$pspid'.";
+        }
 
+        // Save the project setting
+        $this->setProjectSetting($pskey, $psvalue, $pspid);
+
+        return "Project setting '$pskey' has been updated for '$pspid'.";
+    }
     /**
      * @param string $path
      */
@@ -219,6 +240,30 @@ class GoProd extends \ExternalModules\AbstractExternalModule
     {
         $this->project = $project;
     }
+    private function handleDateChange($payload)
+    {
+        $fldtype = $payload['fldtype'] ?? null;
+        $pid = $payload['fldnamelist'] ?? null;
 
+        if (!$fldtype || !$pid) {
+            throw new Exception("Missing 'fldtype' or 'fldnamelist' in payload.");
+        }
+
+        $validTypes = ['YMD', 'MDY', 'DMY'];
+        if (!in_array($fldtype, $validTypes)) {
+            throw new Exception("Invalid date format type: $fldtype");
+        }
+
+        $queryMap = [
+            'YMD' => "update redcap_metadata set element_validation_type = replace(replace(element_validation_type, '_mdy', '_ymd'), '_dmy', '_ymd') where project_id = ? and right(element_validation_type, 4) IN ('_mdy', '_dmy')",
+            'MDY' => "update redcap_metadata set element_validation_type = replace(replace(element_validation_type, '_ymd', '_mdy'), '_dmy', '_mdy') where project_id = ? and right(element_validation_type, 4) IN ('_ymd', '_dmy')",
+            'DMY' => "update redcap_metadata set element_validation_type = replace(replace(element_validation_type, '_ymd', '_dmy'), '_mdy', '_dmy') where project_id = ? and right(element_validation_type, 4) IN ('_ymd', '_mdy')",
+        ];
+
+        $query = $queryMap[$fldtype];
+        $this->query($query, [$pid]);
+
+        return "All date fields have been changed to the $fldtype format.";
+    }
 
 }

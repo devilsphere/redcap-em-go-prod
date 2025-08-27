@@ -3,7 +3,7 @@
     <div class="row">
       <div v-if="showAlert === false" class="col-12 d-grid gap-2">
         <button :disabled="buttonDisabled" @click="validate('ALL_VALIDATIONS')"
-                class="btn btn-md btn-primary btn-block">{{
+                id="rclbtn" class="btn btn-md btn-primary btn-block">{{
             notifications.RUN
           }}
         </button>

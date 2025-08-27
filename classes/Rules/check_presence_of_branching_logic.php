@@ -13,7 +13,7 @@ class check_presence_of_branching_logic implements ValidationsImplementation
     public $dataDictionary = [];
 
     public $inconsistentFields = [];
-
+    public $extra = '';
     public $modalHeader = array("Instrument", "Variable / Field Name", "Field Label", "Options/Choices", "Edit");
 
     public function __constructor($project, $notifications)
@@ -22,7 +22,10 @@ class check_presence_of_branching_logic implements ValidationsImplementation
         $this->setNotifications($notifications);
         $this->dataDictionary = \REDCap::getDataDictionary('array');;
     }
-
+    public function setExtra(): void
+    {
+        $this->extra = Validations::getCheckDetailsTextBox('check_presence_of_branching_logic_comment');
+    }
     public function getProject(): \Project
     {
         return $this->project;
@@ -35,7 +38,7 @@ class check_presence_of_branching_logic implements ValidationsImplementation
 
     public function validate(): bool
     {
-
+        self::setExtra();
         $var = array();
         // to ingnore smart variables
         $array_smart_variables = array("user-name",
@@ -119,6 +122,7 @@ class check_presence_of_branching_logic implements ValidationsImplementation
             'type'  => $this->getNotifications()['DANGER'],
             'links' => array(),
             'modal' => $this->inconsistentFields,
+            'extra' => $this->extra,
             'modalHeader' => $this->modalHeader
         );
     }
