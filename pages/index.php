@@ -10,7 +10,7 @@
 
     // init REDCap VUEJS
     //print loadJS('vue/vue-factory/dist/js/app.js');
-    print loadJS('vue/components/dist/lib.umd.js');
+    print loadJS('vue/components/dist/lib.umd.js'); //above file was missing, I chose the next logical file after a few trials and errors.
     $user = $module->framework->getUser();
 ?>
 <style>
@@ -43,7 +43,7 @@
         }).catch(function(err) { alert('error: ' + err); });
     }
 
-    function ShowUserCommentjs(pskey) {
+    function ShowUserCommentjs(pskey) { // show textarea and save button, hide show button not in use yet, still working out the best way
         let savebtnname = pskey + "_save";
         let showbtnname = pskey + "_addcomment";
         let savebtn = document.getElementById(savebtnname);

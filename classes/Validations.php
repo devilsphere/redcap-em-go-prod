@@ -357,22 +357,22 @@ class Validations
         $html = '';
         $html .= '<div class="cc-comment" style="max-width:560px;">';
         $html .= ' <table role="presentation" style="border-collapse:collapse; width:100%;">';
-        $html .= ' <tr>';
-        $html .= ' <td colspan="2" style="padding:0 0 6px;">';
-        $html .= ' <label for="' . $boxid . '" style="font-weight:600; color:#111827;">Add Comments</label>';
-        $html .= ' </td>';
-        $html .= ' </tr>';
+        //$html .= ' <tr>';
+        //$html .= ' <td colspan="2" style="padding:0 0 6px;">';
+        //$html .= ' <label for="' . $boxid . '" style="font-weight:600; color:#111827;">Add Comments</label>';
+        //$html .= ' </td>';
+        //$html .= ' </tr>';
         $html .= ' <tr>';
 // Small button on the LEFT
-        $html .= ' <td style="vertical-align:top; white-space:nowrap; padding:0 8px 0 0;">';
+        //$html .= ' <td style="vertical-align:top; white-space:nowrap; padding:0 8px 0 0;">';
         //$html .= ' <button type="button" id="' . $boxid . '_addcomment" title="Add comment" aria-label="Add comment" onclick="ShowUserCommentjs(\'' . $boxid . '\')"'
         //    . ' style="padding:4px 8px; font-size:12px; line-height:1.2; border:1px solid #CBD5E1; border-radius:6px; background:#FFF; cursor:pointer;">Add Comment</button>';
-        $html .= ' <button type="button" id="' . $boxid . '_save" title="Save comment" aria-label="Save comment" onclick="SaveUserCommentjs(\'' . $boxid . '\')"'
-            . ' style="padding:4px 8px; font-size:12px; line-height:1.2; border:1px solid #CBD5E1; border-radius:6px; background:#FFF; cursor:pointer;">Save</button>';
-        $html .= ' </td>';
+        //$html .= ' <button type="button" id="' . $boxid . '_save" title="Save comment" aria-label="Save comment" onclick="SaveUserCommentjs(\'' . $boxid . '\')"'
+       //     . ' style="padding:4px 8px; font-size:12px; line-height:1.2; border:1px solid #CBD5E1; border-radius:6px; background:#FFF; cursor:pointer;">Save</button>';
+        //$html .= ' </td>';
 // Expandable/shrinkable textbox on the RIGHT
         $html .= ' <td style="width:100%;">';
-        $html .= ' <textarea id="' . $boxid . '" class="usercomment" name="' . $boxid . '" placeholder="Comments..." rows="3"'
+        $html .= ' <textarea id="' . $boxid . '" class="usercomment" name="' . $boxid . '" placeholder="Comments..." rows="3" onchange="SaveUserCommentjs(\'' . $boxid . '\')"'
             . ' style="width:100%; min-height:2.75rem; resize:vertical; box-sizing:border-box; border:1px solid #CBD5E1; border-radius:6px; padding:8px 10px; font:14px/1.3 Arial, Helvetica, sans-serif;"></textarea>';
         $html .= ' </td>';
         $html .= ' </tr>';
