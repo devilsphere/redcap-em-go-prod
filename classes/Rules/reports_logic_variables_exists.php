@@ -7,7 +7,7 @@ class reports_logic_variables_exists implements ValidationsImplementation
     private $project;
 
     private $notifications = [];
-
+    public $extra = '';
     public $break = false;
 
     public $modalTableHeader = array("Report Name", "Report ID", "Missing Variable", "Edit");
@@ -20,6 +20,14 @@ class reports_logic_variables_exists implements ValidationsImplementation
         $this->setProject($project);
         $this->setNotifications($notifications);
         $this->dataDictionary = \REDCap::getDataDictionary('array');;
+        $this->setExtra();
+    }
+    public function setExtra(): void
+    {
+        $fqcn = static::class; // e.g. Stanford\\GoProd\\is_irb_exists
+        $short = ($p = strrpos($fqcn, '\\')) !== false ? substr($fqcn, $p + 1) : $fqcn; // is_irb_exists
+        $boxid = $short . '_comment';
+        $this->extra = Validations::getCheckDetailsTextBox($boxid);
     }
 
 
@@ -76,6 +84,7 @@ class reports_logic_variables_exists implements ValidationsImplementation
             'body' => $this->getNotifications()['REPORTS_LOGIC_BODY'],
             'type' => $this->getNotifications()['WARNING'],
             'modal' => $this->inconsistentVariables,
+            'extra' => $this->extra,
             'modalHeader' => $this->modalTableHeader,
             'links' => array(),
         );

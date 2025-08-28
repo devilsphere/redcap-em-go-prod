@@ -21,7 +21,10 @@ class check_test_records_and_export implements ValidationsImplementation
     }
     public function setExtra(): void
     {
-        $this->extra = Validations::getCheckDetailsTextBox('check_presence_of_branching_logic_comment');
+        $fqcn = static::class; // e.g. Stanford\\GoProd\\is_irb_exists
+        $short = ($p = strrpos($fqcn, '\\')) !== false ? substr($fqcn, $p + 1) : $fqcn; // is_irb_exists
+        $boxid = $short . '_comment';
+        $this->extra = Validations::getCheckDetailsTextBox($boxid);
     }
 
     public function getProject(): \Project
@@ -35,7 +38,7 @@ class check_test_records_and_export implements ValidationsImplementation
     }
 
     public function validate(): bool
-    {
+    {   // TODO: adjust sql pull to use the log table for the project
         //project information
         $create_record_array=Array(Validations::CleanString('Create survey response (Auto calculation)'),Validations::CleanString('Create survey response'),Validations::CleanString('Created Response'),Validations::CleanString('Create record'),Validations::CleanString('Created Record'),Validations::CleanString('Create record (API)'),Validations::CleanString( 'Create record (API) (Auto calculation)'),Validations::CleanString('Create record (Auto calculation)'),Validations::CleanString('Create record (import)'));
         $export_data_array=Array(Validations::CleanString('Export data'),Validations::CleanString('Export data (API Playground)'),Validations::CleanString( 'Export data (API)'),Validations::CleanString('Export data (CSV raw with return codes)'));

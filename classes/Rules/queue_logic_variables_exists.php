@@ -10,7 +10,7 @@ class queue_logic_variables_exists implements ValidationsImplementation
     private $notifications = [];
 
     public $break = false;
-
+    public $extra = '';
     public $inconsistentFields = [];
 
     public $modalHeader = array("Instrument", "Event Name (if Longitudinal)", "Missing Variable", "Edit");
@@ -19,7 +19,14 @@ class queue_logic_variables_exists implements ValidationsImplementation
     {
         $this->setProject($project);
         $this->setNotifications($notifications);
-
+        $this->setExtra();
+    }
+    public function setExtra(): void
+    {
+        $fqcn = static::class; // e.g. Stanford\\GoProd\\is_irb_exists
+        $short = ($p = strrpos($fqcn, '\\')) !== false ? substr($fqcn, $p + 1) : $fqcn; // is_irb_exists
+        $boxid = $short . '_comment';
+        $this->extra = Validations::getCheckDetailsTextBox($boxid);
     }
 
     public function getProject(): \Project
@@ -61,10 +68,11 @@ class queue_logic_variables_exists implements ValidationsImplementation
     {
         return array(
             'title' => $this->getNotifications()['QUEUE_LOGIC_TITLE'],
-            'body' => $this->getNotifications()['QUEUE_LOGIC_TITLEBODY'],
+            'body' => $this->getNotifications()['QUEUE_LOGIC_BODY'],
             'type' => $this->getNotifications()['DANGER'],
             'links' => array(),
             'modal' => $this->inconsistentFields,
+            'extra' => $this->extra,
             'modalHeader' => $this->modalHeader
         );
     }
@@ -111,7 +119,7 @@ class queue_logic_variables_exists implements ValidationsImplementation
                  WHERE
                     RSQ.condition_logic IS NOT NULL and RSQ.active=1 and SRV.survey_id=RSQ.survey_id and SRV.project_id=".$_GET['pid'];*/
         $sql = "SELECT
-                      rs.form_name as form,  rsq.event_id as event_id, rsq.condition_logic as logic 
+                      rs.form_name as form,  rsq.event_id as event_id, rsq.condition_logic as logic
                     FROM
                       redcap_surveys_queue rsq
                       join redcap_surveys rs on rsq.survey_id = rs.survey_id

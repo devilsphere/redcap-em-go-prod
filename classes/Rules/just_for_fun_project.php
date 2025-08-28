@@ -9,7 +9,7 @@ class just_for_fun_project implements ValidationsImplementation
     private $project;
 
     private $notifications = [];
-
+    public $extra = '';
     public $break=false;
 
     public function __constructor($project, $notifications)
@@ -17,6 +17,14 @@ class just_for_fun_project implements ValidationsImplementation
         $this->break = true;
         $this->setProject($project);
         $this->setNotifications($notifications);
+        $this->setExtra();
+    }
+    public function setExtra(): void
+    {
+        $fqcn = static::class; // e.g. Stanford\\GoProd\\is_irb_exists
+        $short = ($p = strrpos($fqcn, '\\')) !== false ? substr($fqcn, $p + 1) : $fqcn; // is_irb_exists
+        $boxid = $short . '_comment';
+        $this->extra = Validations::getCheckDetailsTextBox($boxid);
     }
 
     public function getProject(): \Project
@@ -40,6 +48,7 @@ class just_for_fun_project implements ValidationsImplementation
             'title' => $this->getNotifications()['JUST_FOR_FUN_PROJECT_TITLE'],
             'body' => $this->getNotifications()['JUST_FOR_FUN_PROJECT_TITLE'],
             'type' => $this->getNotifications()['DANGER'],
+            'extra' => $this->extra,
             'links' => array(
                 array(
                     'url' => APP_PATH_WEBROOT.'ProjectSetup/index.php?pid='.$this->getProject()->project_id,

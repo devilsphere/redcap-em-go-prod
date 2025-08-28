@@ -9,7 +9,7 @@ class today_exists_in_calculations implements ValidationsImplementation
     private $notifications = [];
 
     public $break = false;
-
+    public $extra = '';
     public $modalTableHeader = array("Instrument", "Variable / Field Name", "Field Label", "Missing Variable", "Edit");
     public $inconsistentVariables = [];
 
@@ -22,6 +22,14 @@ class today_exists_in_calculations implements ValidationsImplementation
         $this->setProject($project);
         $this->setNotifications($notifications);
         $this->dataDictionary = \REDCap::getDataDictionary('array');;
+        $this->setExtra();
+    }
+    public function setExtra(): void
+    {
+        $fqcn = static::class; // e.g. Stanford\\GoProd\\is_irb_exists
+        $short = ($p = strrpos($fqcn, '\\')) !== false ? substr($fqcn, $p + 1) : $fqcn; // is_irb_exists
+        $boxid = $short . '_comment';
+        $this->extra = Validations::getCheckDetailsTextBox($boxid);
     }
 
 
@@ -75,6 +83,7 @@ class today_exists_in_calculations implements ValidationsImplementation
             'body' => $this->getNotifications()['CALCULATED_TODAY_BODY'],
             'type' => $this->getNotifications()['WARNING'],
             'modal' => $this->inconsistentVariables,
+            'extra' => $this->extra,
             'modalHeader' => $this->modalTableHeader,
             'links' => array(),
         );

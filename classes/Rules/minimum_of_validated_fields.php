@@ -12,7 +12,7 @@ class minimum_of_validated_fields implements ValidationsImplementation
     private $notifications = [];
 
     public $break = false;
-
+    public $extra = '';
     private $minPercentage = 0.05;
     public $validatedFields = 0;
     public $textBoxFields = 0;
@@ -24,6 +24,14 @@ class minimum_of_validated_fields implements ValidationsImplementation
         $this->setProject($project);
         $this->setNotifications($notifications);
         $this->minPercentage = ExternalModules::getSystemSetting($this->prefix, 'minimum_percentage');
+        $this->setExtra();
+    }
+    public function setExtra(): void
+    {
+        $fqcn = static::class; // e.g. Stanford\\GoProd\\is_irb_exists
+        $short = ($p = strrpos($fqcn, '\\')) !== false ? substr($fqcn, $p + 1) : $fqcn; // is_irb_exists
+        $boxid = $short . '_comment';
+        $this->extra = Validations::getCheckDetailsTextBox($boxid);
     }
 
     public function getProject(): \Project
@@ -67,7 +75,7 @@ class minimum_of_validated_fields implements ValidationsImplementation
             'title' => $this->getNotifications()['NUMBER_VALIDATED_RECORDS_TITLE'],
             'body' => $this->getNotifications()['NUMBER_VALIDATED_RECORDS_BODY'],
             'type' => $this->getNotifications()['WARNING'],
-            'extra' => '<u>' . $this->getNotifications()['VALIDATED_FIELDS'] . '</u>' . $this->validatedFields . '<br><u>' . $this->getNotifications()['TEXT_BOX_FIELDS'] . '</u>' . $this->textBoxFields,
+            'extra' => $this->extra . '<u>' . $this->getNotifications()['VALIDATED_FIELDS'] . '</u>' . $this->validatedFields . '<br><u>' . $this->getNotifications()['TEXT_BOX_FIELDS'] . '</u>' . $this->textBoxFields,
             'links' => array(),
         );
     }

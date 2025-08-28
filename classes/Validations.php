@@ -365,6 +365,8 @@ class Validations
         $html .= ' <tr>';
 // Small button on the LEFT
         $html .= ' <td style="vertical-align:top; white-space:nowrap; padding:0 8px 0 0;">';
+        //$html .= ' <button type="button" id="' . $boxid . '_addcomment" title="Add comment" aria-label="Add comment" onclick="ShowUserCommentjs(\'' . $boxid . '\')"'
+        //    . ' style="padding:4px 8px; font-size:12px; line-height:1.2; border:1px solid #CBD5E1; border-radius:6px; background:#FFF; cursor:pointer;">Add Comment</button>';
         $html .= ' <button type="button" id="' . $boxid . '_save" title="Save comment" aria-label="Save comment" onclick="SaveUserCommentjs(\'' . $boxid . '\')"'
             . ' style="padding:4px 8px; font-size:12px; line-height:1.2; border:1px solid #CBD5E1; border-radius:6px; background:#FFF; cursor:pointer;">Save</button>';
         $html .= ' </td>';

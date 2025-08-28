@@ -20,7 +20,10 @@ class check_un_designated_longitudinal_forms implements ValidationsImplementatio
     }
     public function setExtra(): void
     {
-        $this->extra = Validations::getCheckDetailsTextBox('check_un_designated_longitudinal_forms_comment');
+        $fqcn = static::class; // e.g. Stanford\\GoProd\\is_irb_exists
+        $short = ($p = strrpos($fqcn, '\\')) !== false ? substr($fqcn, $p + 1) : $fqcn; // is_irb_exists
+        $boxid = $short . '_comment';
+        $this->extra = Validations::getCheckDetailsTextBox($boxid);
     }
 
 

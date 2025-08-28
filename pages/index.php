@@ -61,18 +61,24 @@ $user = $module->framework->getUser();
         }).catch(function(err) {
             alert('error: ' + err);
         });
-
     }
-    function SaveUserComment2(inputId, value){
-        if (typeof value !== 'string') value = String(value ?? '');
-        var trimmed = value.trim();
-        if (!trimmed) {
-            alert('Please enter a comment before saving.');
-// Why: guide users back to the field
-            try { document.getElementById(inputId)?.focus(); } catch(_){}
-            return;
+    function ShowUserCommentjs(pskey) {
+        let savebtnname = pskey + "_save";
+        let showbtnname = pskey + "_addcomment";
+        let savebtn = document.getElementById(savebtnname);
+        if (savebtn) {
+            savebtn.style.display = 'block'; // or another appropriate value like 'inline' or 'flex'
         }
-        //console.log('Saving comment for', inputId, '=>', trimmed);
+        let showbtn = document.getElementById(showbtnname);
+        if (showbtn) {
+            savebtn.style.display = 'none'; // or another appropriate value like 'inline' or 'flex'
+        }
+        let textbox = document.getElementById(pskey);
+        if (textbox) {
+            textbox.style.display = 'block'; // or another appropriate value like 'inline' or 'flex'
+            textbox.focus();
+        }
+
     }
     window.populateUserComments = function populateUserComments(settings){
         //console.log('Populating user comments from settings:', settings);
@@ -86,12 +92,12 @@ $user = $module->framework->getUser();
         var byId = Object.create(null);
         for (var i = 0; i < nodes.length; i++) {
             var el = nodes[i];
-            console.log('el',el);
+            //console.log('el',el);
             if (!el || !el.id) continue;
 // Only text inputs or textareas
             var tag = (el.tagName || '').toUpperCase();
             var type = (el.type || '').toLowerCase();
-            console.log('tag',tag,'type',type);
+           // console.log('tag',tag,'type',type);
             if (tag === 'TEXTAREA' || (tag === 'INPUT' && (type === '' || type === 'text'))) {
                 byId[el.id] = el;
             }
@@ -103,7 +109,7 @@ $user = $module->framework->getUser();
         for (var k = 0; k < keys.length; k++) {
             var key = keys[k];
             var target = byId[key];
-            console.log('key',key,'target',target);
+            //console.log('key',key,'target',target);
             if (!target) continue;
             var value = settings[key];
             if (value == null) continue;
