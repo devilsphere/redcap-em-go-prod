@@ -25,7 +25,10 @@ class my_awesome_new_rule implements ValidationsImplementation
 
     public function setExtra(): void
     {
-        $this->extra = Validations::getCheckDetailsTextBox('are_dates_consistent_user_comment');
+        $fqcn = static::class; // e.g. Stanford\\GoProd\\is_irb_exists
+        $short = ($p = strrpos($fqcn, '\\')) !== false ? substr($fqcn, $p + 1) : $fqcn; // is_irb_exists
+        $boxid = $short . '_comment';
+        $this->extra = Validations::getCheckDetailsTextBox($boxid);
     }
     public function getProject(): \Project
     {

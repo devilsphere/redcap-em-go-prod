@@ -29,8 +29,10 @@
     "minimum_of_validated_fields",
     "reports_logic_variables_exists",
     "today_exists_in_calculations",
-      "datechange",
-      "saveusercomment"
+    "e_consent_check",
+      "e_consent_form_check",
+    "datechange",
+    "saveusercomment"
   ],
   "authors": [
     {
@@ -233,6 +235,18 @@
       "required": false,
       "type": "checkbox"
     },
+      {
+          "key": "e_consent_check",
+          "name": "Check E-consent settings<div class='badge badge-danger'>(DANGER)</div>",
+          "required": false,
+          "type": "checkbox"
+      },
+      {
+          "key": "e_consent_form_check",
+          "name": "Check E-consent form is set up correctly<div class='badge badge-danger'>(DANGER)</div>",
+          "required": false,
+          "type": "checkbox"
+      },
     {
       "key": "enable-system-debug-logging",
       "name": "<b>Enable Debug Logging (system-wide)</b><i>(optional)</i> Requires installation and configuration of emLogger",

@@ -115,7 +115,7 @@ class are_dates_consistent implements ValidationsImplementation
 
     public function getDateAdjustmentHtml($pid)
     {
-        $html = '<table id="PrintDatesConsistentErrorstbl" class="table table-striped">';
+        $html = '<table id="PrintDatesConsistentErrorstbl">';
         $html .= '<thead>';
         $html .= '<tr>';
         $html .= '<td colspan="5" class="gp-info-content">';
