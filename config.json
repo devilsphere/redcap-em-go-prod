@@ -1,268 +1,275 @@
 {
-  "name": "Go-Prod Plugin Refactor",
-  "namespace": "Stanford\\GoProd",
-  "description": "This EM is a replacement for Go-Prod plugin. ",
-  "documentation": "README.md",
-  "framework-version": 11,
-  "enable-ajax-logging": true,
-  "auth-ajax-actions": [
-    "ALL_VALIDATIONS",
-    "just_for_fun_project",
-    "is_research_project",
-    "is_pi_exists",
-    "is_irb_exists",
-    "has_r2p2_project",
-    "is_rma_exists",
-    "check_test_records_and_export",
-    "check_un_designated_longitudinal_forms",
-    "are_dates_consistent",
-    "are_positive_negative_consistent",
-    "are_yes_no_consistent",
-    "asi_logic_variables_exists",
-    "check_my_first_instrument_presence",
-    "check_other_or_unknown",
-    "check_presence_of_branching_logic",
-    "check_presence_of_calculated_fields",
-    "data_quality_logic_variables_exists",
-    "forms_with_too_many_fields",
-    "identifier_exists",
-    "minimum_of_validated_fields",
-    "reports_logic_variables_exists",
-    "today_exists_in_calculations",
-    "e_consent_check",
-      "e_consent_form_check",
-    "datechange",
-    "saveusercomment"
-  ],
-  "authors": [
-    {
-      "name": "Ihab Zeedia",
-      "email": "ihab.zeedia@stanford.edu",
-      "institution": "Stanford University"
-    }
-  ],
-  "permissions": [
-    "redcap_every_page_top",
-    "redcap_module_link_check_display"
-  ],
-  "enable-every-page-hooks-on-system-pages": false,
-  "links": {
-    "project": [
-      {
-        "name": "Move your Project to Production",
-        "icon": "fas fa-cog",
-        "key": "goProdAdmin",
-        "url": "pages/index.php",
-        "show-header-and-footer": true
-      }
+    "name": "Go-Prod Plugin Refactor",
+    "namespace": "Stanford\\GoProd",
+    "description": "This EM is a replacement for Go-Prod plugin. ",
+    "documentation": "README.md",
+    "framework-version": 11,
+    "enable-ajax-logging": true,
+    "auth-ajax-actions": [
+        "ALL_VALIDATIONS",
+        "just_for_fun_project",
+        "is_research_project",
+        "is_pi_exists",
+        "is_irb_exists",
+        "has_r2p2_project",
+        "is_rma_exists",
+        "check_test_records_and_export",
+        "check_un_designated_longitudinal_forms",
+        "are_dates_consistent",
+        "are_positive_negative_consistent",
+        "are_yes_no_consistent",
+        "asi_logic_variables_exists",
+        "check_my_first_instrument_presence",
+        "check_other_or_unknown",
+        "check_presence_of_branching_logic",
+        "check_presence_of_calculated_fields",
+        "data_quality_logic_variables_exists",
+        "forms_with_too_many_fields",
+        "identifier_exists",
+        "minimum_of_validated_fields",
+        "reports_logic_variables_exists",
+        "today_exists_in_calculations",
+        "e_consent_check",
+        "e_consent_form_check",
+        "users_in_dag_check",
+        "datechange",
+        "saveusercomment"
     ],
-    "control-center": [
-    ]
-  },
-  "no-auth-pages": [
-  ],
-  "project-settings": [
-  ],
-  "system-settings": [
-    {
-      "key": "just_for_fun_project",
-      "name": "Check if Project is just for Fun<div class='badge badge-danger'>(DANGER)</div>",
-      "required": false,
-      "type": "checkbox",
-        "hidden": true
+    "authors": [
+        {
+            "name": "Ihab Zeedia",
+            "email": "ihab.zeedia@stanford.edu",
+            "institution": "Stanford University"
+        }
+    ],
+    "permissions": [
+        "redcap_every_page_top",
+        "redcap_module_link_check_display"
+    ],
+    "enable-every-page-hooks-on-system-pages": false,
+    "links": {
+        "project": [
+            {
+                "name": "Move your Project to Production",
+                "icon": "fas fa-cog",
+                "key": "goProdAdmin",
+                "url": "pages/index.php",
+                "show-header-and-footer": true
+            }
+        ],
+        "control-center": [
+        ]
     },
-    {
-      "key": "is_research_project",
-      "name": "Check if Project is a Research Project<div class='badge badge-info'>(INFO)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "is_pi_exists",
-      "name": "Check if Project PI is defined<div class='badge badge-danger'>(DANGER)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "is_irb_exists",
-      "name": "Check if Project IRB is defined<div class='badge badge-danger'>(DANGER)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "has_r2p2_project",
-      "name": "<div class='badge badge-warning'>(STANFORD ONLY)</div> Check if this REDCap project is linked to R2P2 Project <div class='badge badge-danger'>(DANGER)</div>",
-      "required": false,
-      "type": "checkbox",
-        "hidden": true
-    },
-    {
-      "key": "is_rma_exists",
-      "name": "<div class='badge badge-warning'>(STANFORD ONLY)</div> Check if this REDCap project part of R2P2 RMA?<div class='badge badge-danger'>(DANGER)</div>",
-      "required": false,
-      "type": "checkbox",
-        "hidden": true
-    },
-    {
-      "key": "check_test_records_and_export",
-      "name": "Check If This project has not been sufficiently tested<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "check_un_designated_longitudinal_forms",
-      "name": "Check If This project has not been sufficiently tested<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "are_dates_consistent",
-      "name": "Check If Dates fields are consistent or not<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "are_positive_negative_consistent",
-      "name": "Check coherence for positive and negative questions<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "are_yes_no_consistent",
-      "name": "Check coherence for yes and no questions<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "check_my_first_instrument_presence",
-      "name": "Check First instrument name is form_1<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "check_other_or_unknown",
-      "name": "Check \"99\" or \"98\" coding recommended for \"other\" and/or \"unknown\" values in drop-down lists, radio-buttons or check-boxes.<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "check_other_or_unknown_similarity",
-      "name": "Other or Unknown similarity default is 95",
-      "required": true,
-      "type": "text",
-      "branchingLogic": {
-        "field": "check_other_or_unknown",
-        "op": "==",
-        "value": "1"
-      }
-    },
-    {
-      "key": "asi_logic_variables_exists",
-      "name": "Check Problems with ASI Logic<div class='badge badge-danger'>(DANGER)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "check_presence_of_branching_logic",
-      "name": "Check Branching logic inconsistencies.<div class='badge badge-danger'>(DANGER)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "check_presence_of_calculated_fields",
-      "name": "Check Calculated fields inconsistencies.<div class='badge badge-danger'>(DANGER)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "data_quality_logic_variables_exists",
-      "name": "Check Calculated fields inconsistencies.<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "forms_with_too_many_fields",
-      "name": "Check If instruments has more that 100 fields.<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "forms_with_too_many_fields_max_recommended",
-      "name": "Max number of fields in instrument default is 100",
-      "required": true,
-      "type": "text",
-      "branchingLogic": {
-        "field": "forms_with_too_many_fields",
-        "op": "==",
-        "value": "1"
-      }
-    },
-    {
-      "key": "identifier_exists",
-      "name": "Check if a field is defined as a identifier.<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "minimum_of_validated_fields",
-      "name": "Check Very few validated text fields.<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "minimum_percentage",
-      "name": "Minimum Validated Fields Percentage Eg 0.05 is %5",
-      "required": true,
-      "type": "text",
-      "branchingLogic": {
-        "field": "minimum_of_validated_fields",
-        "op": "==",
-        "value": "1"
-      }
-    },
-    {
-      "key": "queue_logic_variables_exists",
-      "name": "Check Problems found in the Survey Queue logic.<div class='badge badge-danger'>(DANGER)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "reports_logic_variables_exists",
-      "name": "Check Problems found in some of your Reports Advanced Filter Logic.<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-    {
-      "key": "today_exists_in_calculations",
-      "name": "Check Calculations using \"Today\".<div class='badge badge-warning'>(WARNING)</div>",
-      "required": false,
-      "type": "checkbox"
-    },
-      {
-          "key": "e_consent_check",
-          "name": "Check E-consent settings<div class='badge badge-danger'>(DANGER)</div>",
-          "required": false,
-          "type": "checkbox"
-      },
-      {
-          "key": "e_consent_form_check",
-          "name": "Check E-consent form is set up correctly<div class='badge badge-danger'>(DANGER)</div>",
-          "required": false,
-          "type": "checkbox"
-      },
-    {
-      "key": "enable-system-debug-logging",
-      "name": "<b>Enable Debug Logging (system-wide)</b><i>(optional)</i> Requires installation and configuration of emLogger",
-      "required": false,
-      "type": "checkbox"
+    "no-auth-pages": [
+    ],
+    "project-settings": [
+    ],
+    "system-settings": [
+        {
+            "key": "just_for_fun_project",
+            "name": "Check if Project is just for Fun<div class='badge badge-danger'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox",
+            "hidden": true
+        },
+        {
+            "key": "is_research_project",
+            "name": "Check if Project is a Research Project<div class='badge badge-info'>(INFO)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "is_pi_exists",
+            "name": "Check if Project PI is defined<div class='badge badge-danger'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "is_irb_exists",
+            "name": "Check if Project IRB is defined<div class='badge badge-danger'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "has_r2p2_project",
+            "name": "<div class='badge badge-warning'>(STANFORD ONLY)</div> Check if this REDCap project is linked to R2P2 Project <div class='badge badge-danger'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox",
+            "hidden": true
+        },
+        {
+            "key": "is_rma_exists",
+            "name": "<div class='badge badge-warning'>(STANFORD ONLY)</div> Check if this REDCap project part of R2P2 RMA?<div class='badge badge-danger'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox",
+            "hidden": true
+        },
+        {
+            "key": "check_test_records_and_export",
+            "name": "Check If This project has not been sufficiently tested<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "check_un_designated_longitudinal_forms",
+            "name": "Check If This project has not been sufficiently tested<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "are_dates_consistent",
+            "name": "Check If Dates fields are consistent or not<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "are_positive_negative_consistent",
+            "name": "Check coherence for positive and negative questions<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "are_yes_no_consistent",
+            "name": "Check coherence for yes and no questions<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "check_my_first_instrument_presence",
+            "name": "Check First instrument name is form_1<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "check_other_or_unknown",
+            "name": "Check \"99\" or \"98\" coding recommended for \"other\" and/or \"unknown\" values in drop-down lists, radio-buttons or check-boxes.<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "check_other_or_unknown_similarity",
+            "name": "Other or Unknown similarity default is 95",
+            "required": true,
+            "type": "text",
+            "branchingLogic": {
+                "field": "check_other_or_unknown",
+                "op": "==",
+                "value": "1"
+            }
+        },
+        {
+            "key": "asi_logic_variables_exists",
+            "name": "Check Problems with ASI Logic<div class='badge badge-danger'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "check_presence_of_branching_logic",
+            "name": "Check Branching logic inconsistencies.<div class='badge badge-danger'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "check_presence_of_calculated_fields",
+            "name": "Check Calculated fields inconsistencies.<div class='badge badge-danger'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "data_quality_logic_variables_exists",
+            "name": "Check Calculated fields inconsistencies.<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "forms_with_too_many_fields",
+            "name": "Check If instruments has more that 100 fields.<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "forms_with_too_many_fields_max_recommended",
+            "name": "Max number of fields in instrument default is 100",
+            "required": true,
+            "type": "text",
+            "branchingLogic": {
+                "field": "forms_with_too_many_fields",
+                "op": "==",
+                "value": "1"
+            }
+        },
+        {
+            "key": "identifier_exists",
+            "name": "Check if a field is defined as a identifier.<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "minimum_of_validated_fields",
+            "name": "Check Very few validated text fields.<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "minimum_percentage",
+            "name": "Minimum Validated Fields Percentage Eg 0.05 is %5",
+            "required": true,
+            "type": "text",
+            "branchingLogic": {
+                "field": "minimum_of_validated_fields",
+                "op": "==",
+                "value": "1"
+            }
+        },
+        {
+            "key": "queue_logic_variables_exists",
+            "name": "Check Problems found in the Survey Queue logic.<div class='badge badge-danger'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "reports_logic_variables_exists",
+            "name": "Check Problems found in some of your Reports Advanced Filter Logic.<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "today_exists_in_calculations",
+            "name": "Check Calculations using \"Today\".<div class='badge badge-warning'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "e_consent_check",
+            "name": "Check E-consent settings<div class='badge badge-danger'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "e_consent_form_check",
+            "name": "Check E-consent form is set up correctly<div class='badge badge-danger'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "users_in_dag_check",
+            "name": "Check for users not in a DAG<div class='badge badge-danger'>(WARNING)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "enable-system-debug-logging",
+            "name": "<b>Enable Debug Logging (system-wide)</b><i>(optional)</i> Requires installation and configuration of emLogger",
+            "required": false,
+            "type": "checkbox"
+        }
+    ],
+    "crons": [
+    ],
+    "compatibility": {
+        "php-version-min": "",
+        "php-version-max": "",
+        "redcap-version-min": "",
+        "redcap-version-max": ""
     }
-  ],
-  "crons": [
-  ],
-  "compatibility": {
-    "php-version-min": "",
-    "php-version-max": "",
-    "redcap-version-min": "",
-    "redcap-version-max": ""
-  }
 }
