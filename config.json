@@ -68,7 +68,8 @@
       "key": "just_for_fun_project",
       "name": "Check if Project is just for Fun<div class='badge badge-danger'>(DANGER)</div>",
       "required": false,
-      "type": "checkbox"
+      "type": "checkbox",
+        "hidden": true
     },
     {
       "key": "is_research_project",
@@ -92,13 +93,15 @@
       "key": "has_r2p2_project",
       "name": "<div class='badge badge-warning'>(STANFORD ONLY)</div> Check if this REDCap project is linked to R2P2 Project <div class='badge badge-danger'>(DANGER)</div>",
       "required": false,
-      "type": "checkbox"
+      "type": "checkbox",
+        "hidden": true
     },
     {
       "key": "is_rma_exists",
       "name": "<div class='badge badge-warning'>(STANFORD ONLY)</div> Check if this REDCap project part of R2P2 RMA?<div class='badge badge-danger'>(DANGER)</div>",
       "required": false,
-      "type": "checkbox"
+      "type": "checkbox",
+        "hidden": true
     },
     {
       "key": "check_test_records_and_export",
