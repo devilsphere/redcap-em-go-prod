@@ -246,12 +246,12 @@ public function saveUserComment($payload)
         $pid = $payload['fldnamelist'] ?? null;
 
         if (!$fldtype || !$pid) {
-            throw new Exception("Missing 'fldtype' or 'fldnamelist' in payload.");
+            throw new \Exception("Missing 'fldtype' or 'fldnamelist' in payload.");
         }
 
         $validTypes = ['YMD', 'MDY', 'DMY'];
         if (!in_array($fldtype, $validTypes)) {
-            throw new Exception("Invalid date format type: $fldtype");
+            throw new \Exception("Invalid date format type: $fldtype");
         }
 
         $queryMap = [
@@ -265,7 +265,7 @@ public function saveUserComment($payload)
 
         return "All date fields have been changed to the $fldtype format.";
     }
-    public function getTierIcon($tier) {
+/*    public function getTierIcon($tier) {
         switch ($tier) {
             case "Gold":
                 return "<i style=\"border: 1px solid; padding: 5px; margin: 5px; color: gold;\" class=\"fa-solid fa-medal\" nowrap> Gold</i>";
@@ -278,6 +278,27 @@ public function saveUserComment($payload)
         }
         //$this->log("Tier not found: " . $tier);
         return null;
+    }*/
+    function getTierIcon(string $tier): string
+    {
+        $tierClass = match (strtolower($tier)) {
+            'gold' => 'tier-badge tier-gold',
+            'silver' => 'tier-badge tier-silver',
+            'bronze' => 'tier-badge tier-bronze',
+            default => 'tier-badge tier-none',
+        };
+
+
+        $label = ucfirst(strtolower($tier));
+
+
+// Keep FA icon separate; style the wrapper, not the <i> icon.
+        return sprintf(
+            '<span class="%s" title="%s"><i class="fa-solid fa-medal" aria-hidden="true"></i><span class="tier-text">%s</span></span>',
+            htmlspecialchars($tierClass, ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars($label, ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars($label, ENT_QUOTES, 'UTF-8')
+        );
     }
     public function getClass($class, $parent, $pidlist, $pid) {
         if ($class === 2) {

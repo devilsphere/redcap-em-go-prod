@@ -38,7 +38,7 @@
 
 ?>
 <div class="project_info">
-    <details open>
+    <details>
         <summary>Project Info</summary>
         <table class="project_info_table">
             <tr>
@@ -63,6 +63,27 @@
             </tr>
         </table>
     </details>
+    <details>
+    <summary>Project Data Info</summary>
+    <table class="project_info_table">
+        <tr>
+            <th>Record Count</th>
+            <th>Datapoint Count</th>
+            <th>Document Count</th>
+            <th>Document Storage(mb)</th>
+            <th>Last Logged Event</th>
+            <th>Last Write Event</th>
+        </tr>
+        <tr>
+            <td><?php echo !empty($prjRecCount) ? $prjRecCount : '<span>0</span>'; ?></td>
+            <td><?php echo !empty($prjDataCount) ? $prjDataCount : '<span>0</span>'; ?></td>
+            <td><?php echo !empty($prjDocCount) ? $prjDocCount : '<span>0</span>'; ?></td>
+            <td><?php echo !empty($prjDocStore) ? $prjDocStore.' mb' : '<span>0 mb</span>'; ?></td>
+            <td><?php echo !empty($Proj->project['last_logged_event']) ? $Proj->project['last_logged_event'] : '<span class="missing">Missing</span>'; ?></td>
+            <td><?php echo !empty($prjLastWrite) ? $prjLastWrite : '<span class="missing">Missing</span>'; ?></td>
+        </tr>
+    </table>
+    </details>
 </div>
 <style>
     .project_info_table {
@@ -82,6 +103,30 @@
     .project_info_table tr:nth-child(even) {
         background-color: #fafafa;
     }
+    .missing {
+        color: red;
+        font-weight: bold;
+    }
+    .tier-badge {
+        display: inline-flex; /* keep icon + text together */
+        align-items: center;
+        gap: 0.4em;
+        padding: 4px 6px;
+        margin: 5px;
+        border: 1px solid currentColor; /* matches text color */
+        white-space: nowrap; /* replaces invalid nowrap attribute */
+        line-height: 1.2; /* avoid tall boxes */
+    }
+    .tier-badge .fa-medal { /* minimal tweak only */
+        font-size: 0.95em;
+    }
+
+
+    /* Theme colors */
+    .tier-gold { color: #d4af37; }
+    .tier-silver { color: #bdbdbd; }
+    .tier-bronze { color: #cd7f32; }
+    .tier-none { color: #61f0f5; }
     .fade-enter-active, .fade-leave-active { transition: opacity .5s; }
     .fade-enter, .fade-leave-to { opacity: 0; }
 </style>
