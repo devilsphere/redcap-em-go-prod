@@ -327,4 +327,21 @@ public function saveUserComment($payload)
 
         return '<span class="prjStandard">Standard Project</span>';
     }
+    public function getPurpose($purp)
+    {
+        switch ($purp) {
+            case '0':
+                return '<strong style="color:red;">Practice / Just for fun</strong>';
+            case '1':
+                return '<strong style="color:red;">Other</strong>';
+            case '2':
+                return 'Research';
+            case '3':
+                return 'Quality Improvement';
+            case '4':
+                return 'Operational Support';
+            default:
+                return '<strong style="color:red;">Unknown Purpose</strong>';
+        }
+    }
 }

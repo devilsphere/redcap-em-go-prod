@@ -84,6 +84,27 @@
         </tr>
     </table>
     </details>
+    <details>
+        <summary>Project Configuration</summary>
+        <table class="project_info_table">
+            <tr>
+                <th>Data Table</th>
+                <th>Log Table</th>
+                <th>Language</th>
+                <th>Status</th>
+                <th>Purpose</th>
+                <th>Data Entry Trigger</th>
+            </tr>
+            <tr>
+                <td><?php echo !empty($Proj->project['data_table']) ? $Proj->project['data_table'] : '<span class="missing">Missing</span>'; ?></td>
+                <td><?php echo !empty($Proj->project['log_event_table']) ? $Proj->project['log_event_table'] : '<span class="missing">Missing</span>'; ?></td>
+                <td><?php echo !empty($Proj->project['project_language']) ? $Proj->project['project_language'] : '<span class="missing">Missing</span>'; ?></td>
+                <td><?php echo $module->getProjectStatus($Proj->project['project_id']); ?></td>
+                <td><?php echo $module->getPurpose($Proj->project['purpose']); ?></td>
+                <td><?php echo empty($Proj->project['data_entry_trigger_url']) ? '<span>None</span>' : $Proj->project['data_entry_trigger_url']; ?></td>
+            </tr>
+        </table>
+    </details>
 </div>
 <style>
     .project_info_table {
