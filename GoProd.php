@@ -265,5 +265,45 @@ public function saveUserComment($payload)
 
         return "All date fields have been changed to the $fldtype format.";
     }
+    public function getTierIcon($tier) {
+        switch ($tier) {
+            case "Gold":
+                return "<i style=\"border: 1px solid; padding: 5px; margin: 5px; color: gold;\" class=\"fa-solid fa-medal\" nowrap> Gold</i>";
+            case "Silver":
+                return "<i style=\"border: 1px solid; padding: 5px; margin: 5px; color: silver;\" class=\"fa-solid fa-medal\" nowrap> Silver</i>";
+            case "Bronze":
+                return "<i style=\"border: 1px solid; padding: 5px; margin: 5px; color: chocolate;\" class=\"fa-solid fa-medal\" nowrap> Bronze</i>";
+            default:
+                return "<i style=\"border: 1px solid; padding: 5px; margin: 5px; color: #61f0f5;\" class=\"fa-solid fa-medal\" nowrap> None</i>";
+        }
+        //$this->log("Tier not found: " . $tier);
+        return null;
+    }
+    public function getClass($class, $parent, $pidlist, $pid) {
+        if ($class === 2) {
+            return '<span class="prjchild">Child of PID ' . htmlspecialchars($parent) . '</span>';
+        }
 
+        if ($class === 1 && $pidlist != $pid) {
+            $pids = array_filter(array_map('trim', explode(',', $pidlist)));
+            $pids = array_diff($pids, [$pid]); // Remove current PID
+
+            $pids = array_values($pids); // reindex array
+            $count = count($pids);
+
+            if ($count <= 3) {
+                $display = implode(', ', $pids);
+            } else {
+                $firstThree = array_slice($pids, 0, 3);
+                $remaining = $count - 3;
+                $fullList = implode(', ', $pids);
+                $display = implode(', ', $firstThree) . " (+{$remaining} more)";
+                $display = '<span title="' . htmlspecialchars($fullList) . '">' . $display . '</span>';
+            }
+
+            return '<span class="prjparent">Parent of PIDs: ' . $display . '</span>';
+        }
+
+        return '<span class="prjStandard">Standard Project</span>';
+    }
 }

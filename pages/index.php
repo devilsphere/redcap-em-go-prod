@@ -5,15 +5,83 @@
     /** @var GoProd $module */
 
     $name = $module->getJavascriptModuleObjectName();
-
+    $rcpid = $module->getProjectId();
     echo $module->initializeJavascriptModuleObject();
+    $rfpresult = $module->query(
+        'SELECT * FROM jhu_project_metrics WHERE project_id = ?',
+        [
+            $rcpid
+        ]
+    );
+
+    if (!$rfpresult || $rfpresult->num_rows == 0) {
+        echo json_encode(['error' => "No project metrics found for project ID: $rcpid"]);
+
+    }
+    $row = $rfpresult->fetch_assoc();
+
+    $prjtier = $module->getTierIcon($row['service_tier']) ?? null;
+    $prjSupportTeam = $row['primary_support'] ?? null;
+    $prjRecCount = $row['record_count'] ?? 0;
+    $prjDataCount = $row['datapoint_count'] ?? 0;
+    $prjDocCount = $row['doc_count'] ?? 0;
+    $prjDocStore = $row['doc_storage_mb'] ?? 0;
+    $prjLastWrite = $row['last_logged_write_event'] ?? 0;
+    $prjParentPID = $row['parent_pid'] ?? 0;
+    $prjClass = $row['project_class'] ?? 1;
+    $prjPIDList = $row['pid_list'] ?? $rcpid;
 
     // init REDCap VUEJS
     //print loadJS('vue/vue-factory/dist/js/app.js');
     print loadJS('vue/components/dist/lib.umd.js'); //above file was missing, I chose the next logical file after a few trials and errors.
     $user = $module->framework->getUser();
+
 ?>
+<div class="project_info">
+    <details open>
+        <summary>Project Info</summary>
+        <table class="project_info_table">
+            <tr>
+                <th>PID</th>
+                <th>Support Team</th>
+                <th>Tier</th>
+                <th>Title</th>
+                <th>PI Name</th>
+                <th>PI Email</th>
+                <th>IRB Number</th>
+                <th>Type</th>
+            </tr>
+            <tr>
+                <td><?php echo !empty($Proj->project['project_id']) ? $Proj->project['project_id'] : '<span class="missing">Missing</span>'; ?></td>
+                <td><?php echo !empty($prjSupportTeam) ? $prjSupportTeam : '<span class="missing">Missing</span>'; ?></td>
+                <td><?php echo !empty($prjtier) ? $prjtier : '<span class="missing">Missing</span>'; ?></td>
+                <td><?php echo !empty($Proj->project['app_title']) ? $Proj->project['app_title'] : '<span class="missing">Missing</span>'; ?></td>
+                <td><?php echo !empty($Proj->project['project_pi_firstname']) || !empty($Proj->project['project_pi_lastname']) ? $Proj->project['project_pi_firstname'] . " " . $Proj->project['project_pi_lastname'] : '<span class="missing">Missing</span>'; ?></td>
+                <td><?php echo !empty($Proj->project['project_pi_email']) ? $Proj->project['project_pi_email'] : '<span class="missing">Missing</span>'; ?></td>
+                <td><?php echo !empty($Proj->project['project_irb_number']) ? $Proj->project['project_irb_number'] : '<span class="missing">Missing</span>'; ?></td>
+                <td><?php echo $module->getClass($prjClass,$prjParentPID,$prjPIDList,$rcpid); ?></td>
+            </tr>
+        </table>
+    </details>
+</div>
 <style>
+    .project_info_table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        margin-bottom: 1em;
+    }
+    .project_info_table th, .project_info_table td {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+    .project_info_table th {
+        background-color: #f2f2f2;
+    }
+    .project_info_table tr:nth-child(even) {
+        background-color: #fafafa;
+    }
     .fade-enter-active, .fade-leave-active { transition: opacity .5s; }
     .fade-enter, .fade-leave-to { opacity: 0; }
 </style>
