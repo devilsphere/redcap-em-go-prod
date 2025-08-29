@@ -1,17 +1,8 @@
 <?php
-    // File: public/config-ini-editor.php
-    // Purpose: Secure, single-file PHP editor for a specific .ini file with backups and basic validation.
 
     declare(strict_types=1);
 
-    /**
-     * =========================
-     * Configuration (EDIT ME)
-     * =========================
-     * SECURITY NOTE: This page should be protected (IP allowlist, VPN, or HTTP Auth).
-     */
-    //define("INI_FILE_PATH", $module->getUrl('language/notifications.ini'));            // <-- set your .ini path
-    const INI_FILE_PATH = __DIR__ . '/notifications.ini'; // <-- set your .ini path
+    const INI_FILE_PATH = __DIR__ . '/notifications.ini'; // .ini path
     const BACKUP_DIR    = __DIR__ . '/ini_backups';        // backups directory (ensure writable)
     const MAX_BYTES     = 1024 * 1024;                     // 1 MB safeguard
     const VALIDATE_SYNTAX_BEFORE_SAVE = true;              // parse .ini for basic syntax check
@@ -21,7 +12,7 @@
     const BASIC_AUTH_ENABLED = false;
     const BASIC_AUTH_USER    = 'admin';
     const BASIC_AUTH_PASS    = 'change-me';
-
+    const BACKUP_SHOW_COUNT = 10; // how many backups to show in list
     // ---------------------
     // Bootstrap & Helpers
     // ---------------------
@@ -97,7 +88,7 @@
         $pattern = BACKUP_DIR . '/' . basename(INI_FILE_PATH) . '.bak-*';
         $files = glob($pattern) ?: [];
         rsort($files, SORT_NATURAL);
-        return array_slice($files, 0, 10); // show latest 10
+        return array_slice($files, 0, BACKUP_SHOW_COUNT);
     }
 
     function create_backup(string $current): ?string {
@@ -248,7 +239,7 @@
 <body>
 <header>
     <div class="row">
-        <h2 style="margin:0">INI Editor</h2>
+        <h2 style="margin:0">INI Editor - Supports basic HTML</h2>
         <div class="chips">
             <span class="chip">File: <?= h(INI_FILE_PATH) ?></span>
             <span class="chip">Size: <?= h(bytes_to_human($filesize)) ?></span>
@@ -314,15 +305,13 @@
     <section class="card">
         <h3 style="margin-top:0">Tips</h3>
         <ul>
-            <li>Protect this page with HTTP Basic Auth or behind a VPN.</li>
-            <li>Ensure the PHP process user can read/write <code><?= h(INI_FILE_PATH) ?></code> and <code><?= h(BACKUP_DIR) ?></code>.</li>
-            <li>Syntax check uses PHP's <code>parse_ini_string()</code>; it won't catch all edge cases.</li>
-            <li>Edits are saved atomically; a timestamped backup is created first.</li>
+            <li>INI file path : <code><?= h(INI_FILE_PATH) ?></code> and Backup Directory : <code><?= h(BACKUP_DIR) ?></code>.</li>
+            <li>IF there is an issue, you can always rename the notifications_orig.ini file notifications.ini to get back to default settings.</li>
         </ul>
     </section>
 </main>
 <footer>
-    <div>© <?= date('Y') ?> INI Editor • Keep this file outside web root or restrict access.</div>
+    <div>© <?= date('Y') ?> GO-Prod Settings Editor</div>
 </footer>
 </body>
 </html>
