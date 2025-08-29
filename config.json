@@ -32,6 +32,7 @@
         "e_consent_check",
         "e_consent_form_check",
         "users_in_dag_check",
+        "fields_with_excess_char_check",
         "datechange",
         "saveusercomment"
     ],
@@ -58,6 +59,13 @@
             }
         ],
         "control-center": [
+            {
+                "name": "Edit Go-Prod Settings",
+                "icon": "fas fa-cog",
+                "key": "goProdEditor",
+                "url": "language/ini_editor.php",
+                "show-header-and-footer": true
+            }
         ]
     },
     "no-auth-pages": [
@@ -253,15 +261,33 @@
         },
         {
             "key": "users_in_dag_check",
-            "name": "Check for users not in a DAG<div class='badge badge-danger'>(WARNING)</div>",
+            "name": "Check for users not in a DAG<div class='badge badge-warning'>(WARNING)</div>",
             "required": false,
             "type": "checkbox"
+        },
+        {
+            "key": "fields_with_excess_char_check",
+            "name": "Check if fields contain excessive characters.<div class='badge badge-info'>(INFO)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+        {
+            "key": "max_char_per_field",
+            "name": "Max number of characters recommended per field, default is 26",
+            "required": true,
+            "type": "text",
+            "branchingLogic": {
+                "field": "fields_with_excess_char_check",
+                "op": "==",
+                "value": "1"
+            }
         },
         {
             "key": "enable-system-debug-logging",
             "name": "<b>Enable Debug Logging (system-wide)</b><i>(optional)</i> Requires installation and configuration of emLogger",
             "required": false,
-            "type": "checkbox"
+            "type": "checkbox",
+            "hidden": true
         }
     ],
     "crons": [
