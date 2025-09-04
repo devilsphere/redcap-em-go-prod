@@ -265,20 +265,7 @@ public function saveUserComment($payload)
 
         return "All date fields have been changed to the $fldtype format.";
     }
-/*    public function getTierIcon($tier) {
-        switch ($tier) {
-            case "Gold":
-                return "<i style=\"border: 1px solid; padding: 5px; margin: 5px; color: gold;\" class=\"fa-solid fa-medal\" nowrap> Gold</i>";
-            case "Silver":
-                return "<i style=\"border: 1px solid; padding: 5px; margin: 5px; color: silver;\" class=\"fa-solid fa-medal\" nowrap> Silver</i>";
-            case "Bronze":
-                return "<i style=\"border: 1px solid; padding: 5px; margin: 5px; color: chocolate;\" class=\"fa-solid fa-medal\" nowrap> Bronze</i>";
-            default:
-                return "<i style=\"border: 1px solid; padding: 5px; margin: 5px; color: #61f0f5;\" class=\"fa-solid fa-medal\" nowrap> None</i>";
-        }
-        //$this->log("Tier not found: " . $tier);
-        return null;
-    }*/
+
     function getTierIcon(string $tier): string
     {
         $tierClass = match (strtolower($tier)) {
@@ -344,4 +331,18 @@ public function saveUserComment($payload)
                 return '<strong style="color:red;">Unknown Purpose</strong>';
         }
     }
+    public function getSystemwideEnabledModules(){
+        $resultset = [];
+        $params = [];
+        $qry = "select directory_prefix from redcap_external_modules where external_module_id in (select external_module_id from redcap_external_module_settings where `key` = 'enabled' and project_id is null and `value` = 'true')";
+        $result = $this->query($qry, $params);
+
+        while($row = $result->fetch_assoc()){
+            $resultset[] = $row['directory_prefix'];
+        }
+
+        return $resultset;
+    }
 }
+
+

@@ -33,6 +33,7 @@
         "e_consent_form_check",
         "users_in_dag_check",
         "fields_with_excess_char_check",
+        "check_branching_logic_simplified",
         "datechange",
         "saveusercomment"
     ],
@@ -282,6 +283,13 @@
                 "value": "1"
             }
         },
+        {
+            "key": "check_branching_logic_simplified",
+            "name": "Simplified Branching logic check</br>(Uses built in REDCAP logic check)<div class='badge badge-info'>(DANGER)</div>",
+            "required": false,
+            "type": "checkbox"
+        },
+
         {
             "key": "enable-system-debug-logging",
             "name": "<b>Enable Debug Logging (system-wide)</b><i>(optional)</i> Requires installation and configuration of emLogger",

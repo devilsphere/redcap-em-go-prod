@@ -13,13 +13,13 @@
             $rcpid
         ]
     );
-
+    //$EMProject = $module->getProject($rcpid);
     if (!$rfpresult || $rfpresult->num_rows == 0) {
         echo json_encode(['error' => "No project metrics found for project ID: $rcpid"]);
 
     }
     $row = $rfpresult->fetch_assoc();
-
+    //\REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'Project Object for '.$rcpid, json_encode($Proj->events));
     $prjtier = $module->getTierIcon($row['service_tier']) ?? null;
     $prjSupportTeam = $row['primary_support'] ?? null;
     $prjRecCount = $row['record_count'] ?? 0;
@@ -30,6 +30,141 @@
     $prjParentPID = $row['parent_pid'] ?? 0;
     $prjClass = $row['project_class'] ?? 1;
     $prjPIDList = $row['pid_list'] ?? $rcpid;
+
+    function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
+
+    function normalize_emevents($emevents): array
+    {
+        if (is_array($emevents)) {
+            return $emevents;
+        }
+        if (is_object($emevents)) {
+            return json_decode(json_encode($emevents), true) ?: [];
+        }
+        if (is_string($emevents)) {
+            $decoded = json_decode($emevents, true);
+            return (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : [];
+        }
+        return [];
+    }
+    function renderRepeatingFormsByArm($emevents, $module): string
+    {
+        $data = normalize_emevents($emevents);
+
+
+// If no arms at all, show None to avoid an empty cell
+        if (empty($data)) {
+            return '<span class="missing">None</span>';
+        }
+
+
+// why: decouple from global helpers and ensure consistent escaping
+        $esc = static function ($value): string {
+            return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+        };
+
+
+        $armItems = [];
+
+
+        foreach ($data as $armKey => $arm) {
+            $armName = $arm['name'] ?? ('Arm ' . (string) $armKey);
+            $events = $arm['events'] ?? [];
+
+
+            $eventItems = [];
+            foreach ($events as $eventId => $eventMeta) {
+                $eventId = (int) $eventId;
+                $eventLabel = $eventMeta['descrip'] ?? ('Event ' . $eventId);
+
+
+                $forms = (array) $module->getRepeatingForms($eventId);
+                $forms = array_values(array_unique(array_filter($forms, 'strlen')));
+
+
+                if (empty($forms)) {
+                    continue; // skip events with no repeating forms
+                }
+
+
+// Avoid string callback 'h' which may not resolve in this namespace
+                $escapedForms = array_map($esc, $forms);
+
+
+                $eventItems[] = '<li>' . $esc($eventLabel) . ': <ul class="forms"><li>'
+                    . implode('</li><li>', $escapedForms) . '</li></ul></li>';
+            }
+
+
+            if (!empty($eventItems)) {
+                $armItems[] = '<li><strong>' . $esc($armName) . '</strong><ul class="events">'
+                    . implode('', $eventItems) . '</ul></li>';
+            }
+        }
+
+
+        if (empty($armItems)) {
+// No forms anywhere across arms
+            return '<span class="missing">None</span>';
+        }
+
+
+        return '<ul class="arms">' . implode('', $armItems) . '</ul>';
+    }
+/*    function renderRepeatingFormsByArm($emevents, $module): string
+    {
+        $data = normalize_emevents($emevents);
+
+
+// If no arms at all, show None to avoid an empty cell
+        if (empty($data)) {
+            return '<span class="missing">None</span>';
+        }
+
+
+        $armItems = [];
+
+
+        foreach ($data as $armKey => $arm) {
+            $armName = $arm['name'] ?? ('Arm ' . (string)$armKey);
+            $events = $arm['events'] ?? [];
+
+
+            $eventItems = [];
+            foreach ($events as $eventId => $eventMeta) {
+                $eventId = (int)$eventId;
+                $eventLabel = $eventMeta['descrip'] ?? ('Event ' . $eventId);
+
+
+                $forms = (array) $module->getRepeatingForms($eventId);
+                $forms = array_values(array_unique(array_filter($forms, 'strlen')));
+
+
+                if (empty($forms)) {
+                    continue; // skip events with no repeating forms
+                }
+
+
+                $eventItems[] = '<li>' . h($eventLabel) . ': <ul class="forms"><li>'
+                    . implode('</li><li>', array_map('h', $forms)) . '</li></ul></li>';
+            }
+
+
+            if (!empty($eventItems)) {
+                $armItems[] = '<li><strong>' . h($armName) . '</strong><ul class="events">'
+                    . implode('', $eventItems) . '</ul></li>';
+            }
+        }
+
+
+        if (empty($armItems)) {
+// No forms anywhere across arms
+            return '<span class="missing">None</span>';
+        }
+
+
+        return '<ul class="arms">' . implode('', $armItems) . '</ul>';
+    }*/
 
     // init REDCap VUEJS
     //print loadJS('vue/vue-factory/dist/js/app.js');
@@ -105,6 +240,142 @@
             </tr>
         </table>
     </details>
+    <details>
+        <summary>Users, Forms, Modules</summary>
+        <table class="project_info_table">
+            <tr>
+                <th>Repeating Forms</th>
+                <th>Users</th>
+                <th>Public Survey</th>
+                <th>Additional Enabled Modules</th>
+            </tr>
+            <tr>
+                <td>
+                    <?php
+                        $emevents = $Proj->events;
+                        echo renderRepeatingFormsByArm($emevents, $module);                    ?>
+                </td>
+                <td>
+                    <?php
+                        $users = $module->framework->getProject($rcpid)->getUsers();
+
+                        if (!empty($users)) {
+                            echo '<ul style="padding-left:1.2em;">';
+                            foreach ($users as $user) {
+                                $rights = $user->getRights($Proj->project['project_id']);
+                                $username = htmlspecialchars($user->getUsername());
+                                $userrole = htmlspecialchars($rights['role_name']) ?? '';
+                                $userdagid = htmlspecialchars($rights['group_id']) ?? '';
+                                $userDagName = '';
+                                if ($userdagid != '') {
+                                    $userDagName = \REDCap::getGroupNames(true, $userdagid);
+                                }
+
+                                //REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'Admin move to production EM - User Rights - '.$user->getUsername(), json_encode($rights));
+
+                                $icons = [];
+
+                                if (!empty($rights['api_token'])) {
+                                    $token = htmlspecialchars($rights['api_token']);
+                                    $icons[] = '<span title="Token - '.$token.'">📡</span>';
+                                }
+
+                                if (!empty($rights['user_rights']) && $rights['user_rights'] == '1') {
+                                    $icons[] = '<span title="User Rights">⚙️</span>';
+                                }
+
+                                if (!empty($rights['design']) && $rights['design'] == '1') {
+                                    $icons[] = '<span title="Design Rights">👷</span>';
+                                }
+
+                                if (!empty($rights['api_import']) && $rights['api_import'] == '1') {
+                                    $icons[] = '<span title="API Import Rights">📥</span>';
+                                }
+
+                                if (!empty($rights['api_export']) && $rights['api_export'] == '1') {
+                                    $icons[] = '<span title="API Export Rights">📤</span>';
+                                }
+
+                                if (!empty($rights['file_repository']) && $rights['file_repository'] == '1') {
+                                    $icons[] = '<span title="File Repo">🗃️</span>';
+                                }
+
+                                if ($userrole != '') {
+                                    $icons[] = '<span title="User Role" style="color:purple;">[' . $userrole . ']</span>';
+                                }
+
+                                if ($userdagid != '') {
+                                    $userDagName = \REDCap::getGroupNames(true, $userdagid);
+                                    $icons[] = '<span title="Data Access Group" style="color:blue;">[' . htmlspecialchars($userDagName) . ']</span>';
+                                }
+
+                                echo '<li>' . $username . ' ' . implode(' ', $icons) . '</li>';
+                            }
+                            echo '</ul>';
+
+                            // Legend/key for icons + colors
+                            echo '
+                                    <div style="font-size:0.9em; margin-top:0.5em;">
+                                        <strong>Legend:</strong>
+                                        <div>📡 = Has API token</div>
+                                        <div>⚙️ = User Rights</div>
+                                        <div>👷 = Design Rights</div>
+                                        <div>📥 = API Import</div>
+                                        <div>📤 = API Export</div>
+                                        <div>🗃️ = File Repo</div>
+                                        <div><span style="color:purple;">[Role]</span> = User Role</div>
+                                        <div><span style="color:blue;">[DAG]</span> = Data Access Group</div>
+                                    </div>';
+                        }
+                    ?>
+                </td>
+
+
+                <td><?php echo empty($module->getPublicSurveyUrl($rcpid)) ? '<span>None</span>' : $module->getPublicSurveyUrl($rcpid); ?></td>
+                <td>
+                    <?php
+                        // List of "all project enabled" module names to exclude this should match the prefix
+/*                        $excludedModules = [
+                            'annotated_pdf',
+                            'data_dictionary_revisions',
+                            'date_validation_action_tags',
+                            'field_notes_display',
+                            'form_field_tooltip',
+                            'hide_submit',
+                            'inline_descriptive_popups',
+                            'instance_table',
+                            'IP_Encrypt',
+                            'Messenger_Block_SuperUsers',
+                            'modify_contact_admin_button',
+                            'multi_signature_consent',
+                            'multi_column_menu',
+                            'redcap_qrcode',
+                            'randomnumber_actiontag',
+                            'recalculate',
+                            'ready_for_production'
+                        ];*/
+                        $excludedModules = $module->getSystemwideEnabledModules();
+                        //\REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'excludedModules for '.$rcpid, json_encode($excludedModules));
+                        $modsenabled = $module->getEnabledModules($rcpid);  // Returns ['prefix' => 'version']
+                        //\REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'modsenabled for '.$rcpid, json_encode($modsenabled));
+                        if (!empty($modsenabled)) {
+                            echo '<ul>';
+                            foreach ($modsenabled as $prefix => $version) {
+                                if (in_array($prefix, $excludedModules)) {
+                                    continue; // Skip this module if in the list above
+                                }
+                                echo '<li>' . htmlspecialchars($prefix) . ' (' . htmlspecialchars($version) . ')</li>';
+                            }
+                            echo '</ul>';
+                        } else {
+                            echo '<span>None</span>';
+                        }
+                    ?>
+
+                </td>
+            </tr>
+        </table>
+    </details>
 </div>
 <style>
     .project_info_table {
@@ -142,8 +413,11 @@
         font-size: 0.95em;
     }
 
+    .arms, .events, .forms { margin: 0.2rem 0 0.2rem 1.1rem; padding: 0; }
+    .arms > li { margin-bottom: 0.25rem; }
+    .forms { list-style-type: disc; }
+    .missing { opacity: 0.75; }
 
-    /* Theme colors */
     .tier-gold { color: #d4af37; }
     .tier-silver { color: #bdbdbd; }
     .tier-bronze { color: #cd7f32; }
