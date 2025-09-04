@@ -105,8 +105,8 @@ class check_presence_of_branching_logic implements ValidationsImplementation
         foreach ($BranchingLogicArray as $variable) {
             $varName = $variable[2];
 
-            if (preg_match('/:(value|label)$/', $varName)) {// Strip known suffixes like :value and :label
-                $varName = preg_replace('/:(value|label)$/', '', $varName);
+            if (preg_match('/:(value|label)$/', $varName)) {// Strip known suffixes like :value, :label, :checked, :unchecked from the variable name for comparison purposes
+                $varName = preg_replace('/:(?:value|label|checked|unchecked)$/', '', $varName);
             }
             if (!in_array($varName, $fields)) {
                 $label = Validations::TextBreak($variable[1]);
