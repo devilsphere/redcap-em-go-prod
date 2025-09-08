@@ -37,7 +37,8 @@ class identifier_exists implements ValidationsImplementation
 
     public function validate(): bool
     {
-        foreach (\REDCap::getDataDictionary() as $field_name => $field_attributes) {
+        //\REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'dictionary', json_encode(\REDCap::getDataDictionary(self::getProject(),'array')));
+        foreach (\REDCap::getDataDictionary($this->getProject()->project_id,'array') as $field_name => $field_attributes) {
             if ($field_attributes['identifier'] == "y") {
                 return true;
             }
@@ -54,7 +55,7 @@ class identifier_exists implements ValidationsImplementation
             'extra' => $this->extra,
             'links' => array(
                 array(
-                    'url' => APP_PATH_WEBROOT . 'ProjectSetup/index.php?pid=' . $this->getProject()->project_id . '&route=IdentifierCheckController:index',
+                    'url' => APP_PATH_WEBROOT . 'index.php?pid=' . $this->getProject()->project_id . '&route=IdentifierCheckController:index',
                     'title' => $this->getNotifications()['EDIT']
                 )
             ),
