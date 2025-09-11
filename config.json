@@ -52,7 +52,7 @@
     "links": {
         "project": [
             {
-                "name": "Move your Project to Production",
+                "name": "Review Project Structure",
                 "icon": "fas fa-cog",
                 "key": "goProdAdmin",
                 "url": "pages/index.php",
