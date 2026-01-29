@@ -38,7 +38,7 @@ class check_test_records_and_export implements ValidationsImplementation
     }
 
     public function validate(): bool
-    {   // TODO: adjust sql pull to use the log table for the project
+    {
         //project information
         $create_record_array=Array(Validations::CleanString('Create survey response (Auto calculation)'),Validations::CleanString('Create survey response'),Validations::CleanString('Created Response'),Validations::CleanString('Create record'),Validations::CleanString('Created Record'),Validations::CleanString('Create record (API)'),Validations::CleanString( 'Create record (API) (Auto calculation)'),Validations::CleanString('Create record (Auto calculation)'),Validations::CleanString('Create record (import)'));
         $export_data_array=Array(Validations::CleanString('Export data'),Validations::CleanString('Export data (API Playground)'),Validations::CleanString( 'Export data (API)'),Validations::CleanString('Export data (CSV raw with return codes)'));
@@ -46,23 +46,8 @@ class check_test_records_and_export implements ValidationsImplementation
         $count_exports=0;
         $total = array();
         $pid = $this->getProject()->project_id;
-        $sql = "SELECT description FROM redcap_log_event  where project_id=$pid
-                UNION All
-                SELECT description FROM redcap_log_event2 where project_id=$pid
-                UNION  All
-                SELECT description FROM redcap_log_event3 where project_id=$pid
-                UNION  All
-                SELECT description FROM redcap_log_event4 where project_id=$pid
-                UNION  All
-                SELECT description FROM redcap_log_event5 where project_id=$pid
-                UNION  All
-                SELECT description FROM redcap_log_event6 where project_id=$pid
-                UNION  All
-                SELECT description FROM redcap_log_event7 where project_id=$pid
-                UNION  All
-                SELECT description FROM redcap_log_event8 where project_id=$pid
-                UNION  All
-                SELECT description FROM redcap_log_event9 where project_id=$pid";
+        $logtable = Validations::getLogtableName($pid);
+        $sql = "SELECT description FROM ".$logtable."  where project_id= ".$pid;
 
 
         $result = db_query( $sql );

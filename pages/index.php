@@ -3,7 +3,7 @@
     namespace Stanford\GoProd;
 
     /** @var GoProd $module */
-
+    $goproggo = true;
     $name = $module->getJavascriptModuleObjectName();
     $rcpid = $module->getProjectId();
     echo $module->initializeJavascriptModuleObject();
@@ -16,20 +16,22 @@
     //$EMProject = $module->getProject($rcpid);
     if (!$rfpresult || $rfpresult->num_rows == 0) {
         echo json_encode(['error' => "No project metrics found for project ID: $rcpid"]);
-
+        $goproggo = false;
+    }else{
+        $row = $rfpresult->fetch_assoc();
+        //\REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'Project Object for '.$rcpid, json_encode($Proj->events));
+        $prjtier = $module->getTierIcon($row['service_tier']) ?? null;
+        $prjSupportTeam = $row['primary_support'] ?? null;
+        $prjRecCount = $row['record_count'] ?? 0;
+        $prjDataCount = $row['datapoint_count'] ?? 0;
+        $prjDocCount = $row['doc_count'] ?? 0;
+        $prjDocStore = $row['doc_storage_mb'] ?? 0;
+        $prjLastWrite = $row['last_logged_write_event'] ?? 0;
+        $prjParentPID = $row['parent_pid'] ?? 0;
+        $prjClass = $row['project_class'] ?? 1;
+        $prjPIDList = $row['pid_list'] ?? $rcpid;
     }
-    $row = $rfpresult->fetch_assoc();
-    //\REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'Project Object for '.$rcpid, json_encode($Proj->events));
-    $prjtier = $module->getTierIcon($row['service_tier']) ?? null;
-    $prjSupportTeam = $row['primary_support'] ?? null;
-    $prjRecCount = $row['record_count'] ?? 0;
-    $prjDataCount = $row['datapoint_count'] ?? 0;
-    $prjDocCount = $row['doc_count'] ?? 0;
-    $prjDocStore = $row['doc_storage_mb'] ?? 0;
-    $prjLastWrite = $row['last_logged_write_event'] ?? 0;
-    $prjParentPID = $row['parent_pid'] ?? 0;
-    $prjClass = $row['project_class'] ?? 1;
-    $prjPIDList = $row['pid_list'] ?? $rcpid;
+
 
     function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 
@@ -170,7 +172,7 @@
     //print loadJS('vue/vue-factory/dist/js/app.js');
     print loadJS('vue/components/dist/lib.umd.js'); //above file was missing, I chose the next logical file after a few trials and errors.
     $user = $module->framework->getUser();
-
+if($goproggo === true){ //go logic
 ?>
 <div class="project_info">
     <details>
@@ -252,12 +254,15 @@
             <tr>
                 <td>
                     <?php
+                        }   //end go logic
                         $emevents = $Proj->events;
+                        $users = $module->framework->getProject($rcpid)->getUsers();
+                        if($goproggo === true){ //go logic
                         echo renderRepeatingFormsByArm($emevents, $module);                    ?>
                 </td>
                 <td>
                     <?php
-                        $users = $module->framework->getProject($rcpid)->getUsers();
+
 
                         if (!empty($users)) {
                             echo '<ul style="padding-left:1.2em;">';
@@ -270,8 +275,6 @@
                                 if ($userdagid != '') {
                                     $userDagName = \REDCap::getGroupNames(true, $userdagid);
                                 }
-
-                                //REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'Admin move to production EM - User Rights - '.$user->getUsername(), json_encode($rights));
 
                                 $icons = [];
 
@@ -334,30 +337,8 @@
                 <td><?php echo empty($module->getPublicSurveyUrl($rcpid)) ? '<span>None</span>' : $module->getPublicSurveyUrl($rcpid); ?></td>
                 <td>
                     <?php
-                        // List of "all project enabled" module names to exclude this should match the prefix
-/*                        $excludedModules = [
-                            'annotated_pdf',
-                            'data_dictionary_revisions',
-                            'date_validation_action_tags',
-                            'field_notes_display',
-                            'form_field_tooltip',
-                            'hide_submit',
-                            'inline_descriptive_popups',
-                            'instance_table',
-                            'IP_Encrypt',
-                            'Messenger_Block_SuperUsers',
-                            'modify_contact_admin_button',
-                            'multi_signature_consent',
-                            'multi_column_menu',
-                            'redcap_qrcode',
-                            'randomnumber_actiontag',
-                            'recalculate',
-                            'ready_for_production'
-                        ];*/
-                        $excludedModules = $module->getSystemwideEnabledModules();
-                        //\REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'excludedModules for '.$rcpid, json_encode($excludedModules));
+                        $excludedModules = $module->getSystemwideEnabledModules();  //grab all systemwide enabled modules to exclude from this list
                         $modsenabled = $module->getEnabledModules($rcpid);  // Returns ['prefix' => 'version']
-                        //\REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'modsenabled for '.$rcpid, json_encode($modsenabled));
                         if (!empty($modsenabled)) {
                             echo '<ul>';
                             foreach ($modsenabled as $prefix => $version) {
@@ -377,6 +358,9 @@
         </table>
     </details>
 </div>
+<?php
+    } //end go logic
+?>
 <style>
     .project_info_table {
         width: 100%;
@@ -434,12 +418,51 @@
     window.isSuperUser = <?=$user->isSuperUser()?1:0; ?>;
     window.emprojsettings = <?php echo json_encode($module->getProjectSettings()) ?>;
 
-    function ChangeDateFormat(fldtype,fldnamelist) {
-        let payload = { fldtype, fldnamelist };
-        module.ajax('datechange', payload).then(function(response) {
-            var formattedResponse = response.replace(/\\n/g, '\n');
-            alert(formattedResponse);
-        }).catch(function(err) { alert('error: ' + err); });
+
+    function ChangeDateFormat(fldtype, fldnamelist, clickedEl) {
+        const payload = { fldtype, fldnamelist };
+
+        module.ajax('datechange', payload)
+            .then(function (response) {
+                const formattedResponse = String(response).replace(/\\n/g, '\n');
+                alert(formattedResponse);
+
+                const outerTr = findOuterRowWithReload(clickedEl);
+                if (!outerTr) return;
+
+                const reloadBtn =
+                    outerTr.querySelector('button.btn.btn-sm.btn-outline-primary.text-center') ||
+                    outerTr.querySelector('button.btn-outline-primary') ||
+                    outerTr.querySelector('button');
+
+                if (!reloadBtn) return;
+
+                setTimeout(function () {
+                    reloadBtn.click();
+                }, 0);
+            })
+            .catch(function (err) {
+                alert('error: ' + err);
+            });
+    }
+
+    /**
+     * Walks up through ancestor <tr>s until it finds one that contains the Reload button cell.
+     * This handles nested tables inside the first <td>.
+     * @param {HTMLElement} el
+     * @returns {HTMLTableRowElement|null}
+     */
+    function findOuterRowWithReload(el) {
+        let tr = el && el.closest ? el.closest('tr') : null;
+
+        while (tr) {
+            if (tr.querySelector('button.btn.btn-sm.btn-outline-primary.text-center, button.btn-outline-primary')) {
+                return tr;
+            }
+            tr = tr.parentElement ? tr.parentElement.closest('tr') : null;
+        }
+
+        return null;
     }
 
     function SaveUserCommentjs(pskey) {
