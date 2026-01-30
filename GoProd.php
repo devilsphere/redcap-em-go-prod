@@ -343,6 +343,30 @@ public function saveUserComment($payload)
 
         return $resultset;
     }
+    public function getMoveToProductionSuperUserLink($pid)
+    {
+        $sql = "
+                SELECT
+                  REGEXP_SUBSTR(
+                    message,
+                    'https?://[^'' )]+'
+                  ) AS approval_link
+                FROM redcap.redcap_outgoing_email_sms_log
+                WHERE email_subject = '[REDCap] Request to Move Project to Production (PID ".$pid.")'
+                ORDER BY time_sent DESC
+                LIMIT 1;
+";
+        \REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'sql for '.$pid, $sql);
+        $result = $this->query($sql, []);
+
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            \REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'query result for '.$pid, json_encode($row['approval_link']));
+            return $row['approval_link'];
+        } else {
+            return 'No Move to Production request found.';
+        }
+    }
 }
 
 

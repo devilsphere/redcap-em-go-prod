@@ -7,19 +7,22 @@
     $name = $module->getJavascriptModuleObjectName();
     $rcpid = $module->getProjectId();
     echo $module->initializeJavascriptModuleObject();
+    $superuserlink = $module->getMoveToProductionSuperUserLink($rcpid);
+    \REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'Project Object for '.$rcpid, json_encode($superuserlink));
+
     $rfpresult = $module->query(
         'SELECT * FROM jhu_project_metrics WHERE project_id = ?',
         [
             $rcpid
         ]
     );
-    //$EMProject = $module->getProject($rcpid);
+    //\REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'rfpresult for '.$rcpid, json_encode($rfpresult));
     if (!$rfpresult || $rfpresult->num_rows == 0) {
         echo json_encode(['error' => "No project metrics found for project ID: $rcpid"]);
         $goproggo = false;
     }else{
         $row = $rfpresult->fetch_assoc();
-        //\REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'Project Object for '.$rcpid, json_encode($Proj->events));
+        //\REDCap::email('msherm12@jh.edu', 'redcap@jh.edu', 'Project Object for '.$rcpid, json_encode($Proj));
         $prjtier = $module->getTierIcon($row['service_tier']) ?? null;
         $prjSupportTeam = $row['primary_support'] ?? null;
         $prjRecCount = $row['record_count'] ?? 0;
@@ -59,8 +62,6 @@
             return '<span class="missing">None</span>';
         }
 
-
-// why: decouple from global helpers and ensure consistent escaping
         $esc = static function ($value): string {
             return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
         };
@@ -89,7 +90,6 @@
                 }
 
 
-// Avoid string callback 'h' which may not resolve in this namespace
                 $escapedForms = array_map($esc, $forms);
 
 
@@ -113,60 +113,7 @@
 
         return '<ul class="arms">' . implode('', $armItems) . '</ul>';
     }
-/*    function renderRepeatingFormsByArm($emevents, $module): string
-    {
-        $data = normalize_emevents($emevents);
 
-
-// If no arms at all, show None to avoid an empty cell
-        if (empty($data)) {
-            return '<span class="missing">None</span>';
-        }
-
-
-        $armItems = [];
-
-
-        foreach ($data as $armKey => $arm) {
-            $armName = $arm['name'] ?? ('Arm ' . (string)$armKey);
-            $events = $arm['events'] ?? [];
-
-
-            $eventItems = [];
-            foreach ($events as $eventId => $eventMeta) {
-                $eventId = (int)$eventId;
-                $eventLabel = $eventMeta['descrip'] ?? ('Event ' . $eventId);
-
-
-                $forms = (array) $module->getRepeatingForms($eventId);
-                $forms = array_values(array_unique(array_filter($forms, 'strlen')));
-
-
-                if (empty($forms)) {
-                    continue; // skip events with no repeating forms
-                }
-
-
-                $eventItems[] = '<li>' . h($eventLabel) . ': <ul class="forms"><li>'
-                    . implode('</li><li>', array_map('h', $forms)) . '</li></ul></li>';
-            }
-
-
-            if (!empty($eventItems)) {
-                $armItems[] = '<li><strong>' . h($armName) . '</strong><ul class="events">'
-                    . implode('', $eventItems) . '</ul></li>';
-            }
-        }
-
-
-        if (empty($armItems)) {
-// No forms anywhere across arms
-            return '<span class="missing">None</span>';
-        }
-
-
-        return '<ul class="arms">' . implode('', $armItems) . '</ul>';
-    }*/
 
     // init REDCap VUEJS
     //print loadJS('vue/vue-factory/dist/js/app.js');
@@ -412,10 +359,22 @@ if($goproggo === true){ //go logic
 
 <div id="app"></div>
 <script>
-    window.productionURL = <?php  echo json_encode(APP_PATH_WEBROOT . 'ProjectSetup/index.php?pid=' . $module->getProjectId() . '&to_prod_plugin=1')?>;
+    window.isSuperUser = <?=$module->isSuperUser()?1:0; ?>;
     window.module = <?=$module->getJavascriptModuleObjectName()?>;
+    // TODO:create function to get the production URL based on super user or not
+    //begin code to add to function
+    if(window.isSuperUser) {
+        let superuserlink = <?php echo json_encode($superuserlink); ?>;
+        if(superuserlink && superuserlink.length > 0 && superuserlink !== 'No Move to Production request found.') { //if link is found take you to the approval page
+            window.productionURL = superuserlink;
+        }else { //if link is not found, it will let you create a new request
+            window.productionURL = <?php  echo json_encode(APP_PATH_WEBROOT . 'ProjectSetup/index.php?pid=' . $module->getProjectId() . '&to_prod_plugin=1')?>;
+        }
+    } else {    //normal user, just go to the request page to create a new request
+        window.productionURL = <?php  echo json_encode(APP_PATH_WEBROOT . 'ProjectSetup/index.php?pid=' . $module->getProjectId() . '&to_prod_plugin=1')?>;
+    }
+    //end code to add to function
     window.notifications = <?php echo json_encode($module->getNotifications()) ?>;
-    window.isSuperUser = <?=$user->isSuperUser()?1:0; ?>;
     window.emprojsettings = <?php echo json_encode($module->getProjectSettings()) ?>;
 
 
