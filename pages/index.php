@@ -361,7 +361,6 @@ if($goproggo === true){ //go logic
 <script>
     window.isSuperUser = <?=$module->isSuperUser()?1:0; ?>;
     window.module = <?=$module->getJavascriptModuleObjectName()?>;
-    // TODO:create function to get the production URL based on super user or not
     //begin code to add to function
     if(window.isSuperUser) {
         let superuserlink = <?php echo json_encode($superuserlink); ?>;
@@ -377,7 +376,7 @@ if($goproggo === true){ //go logic
     window.notifications = <?php echo json_encode($module->getNotifications()) ?>;
     window.emprojsettings = <?php echo json_encode($module->getProjectSettings()) ?>;
 
-
+    const mtplink = <?php echo json_encode($module->getUrl("pages/MTPHelp.md"))?>; //pages/MoveToProductionHelp.php
     function ChangeDateFormat(fldtype, fldnamelist, clickedEl) {
         const payload = { fldtype, fldnamelist };
 
@@ -442,6 +441,15 @@ if($goproggo === true){ //go logic
         if (showbtn) savebtn.style.display = 'none';
         let textbox = document.getElementById(pskey);
         if (textbox) { textbox.style.display = 'block'; textbox.focus(); }
+    }
+    function resetMTPLink() {
+        const anchor = document.getElementById('mtphelplink');
+        if (!anchor || !mtplink) return;
+        console.log(mtplink);
+        anchor.href = mtplink;
+        anchor.textContent = 'Move project to production guidance';
+        anchor.target = '_blank';
+        anchor.rel = 'noopener noreferrer';
     }
 
     // --- Sorting helpers (WHY: table is created only after populateUserComments runs) ---
@@ -557,5 +565,7 @@ if($goproggo === true){ //go logic
 
     // Fallback: if table arrives without manual trigger, sort once the page settles
     window.addEventListener('load', function(){ waitAndSortIssuesTable({ timeout: 6000 }); });
+    document.addEventListener('DOMContentLoaded', resetMTPLink);
+
 </script>
 <script src="<?php echo $module->getUrl("frontend_3/public/js/bundle.js") ?>" defer></script>
